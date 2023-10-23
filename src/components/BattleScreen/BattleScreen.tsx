@@ -8,5 +8,14 @@ interface BattleScreenProps {
 }
 
 export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
-  return <StyledBattleScreenContainer>battle</StyledBattleScreenContainer>;
+  return (
+    <StyledBattleScreenContainer>
+      <div className="you">
+        <img src={you?.sprites.battle_back} alt="" />
+      </div>
+      <div className="enemy">
+        <img src={enemy?.sprites.battle_front} alt="" />
+      </div>
+    </StyledBattleScreenContainer>
+  );
 };
