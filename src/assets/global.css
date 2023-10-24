@@ -6,6 +6,10 @@ html {
   background-color: #0b0c0d;
   font-family: "Raleway", sans-serif;
   color: #2c3e50;
+  box-sizing: border-box;
+}
+* {
+  box-sizing: border-box;
 }
 #root {
   overflow: hidden;
