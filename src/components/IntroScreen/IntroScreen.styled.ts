@@ -135,7 +135,7 @@ export const StyledIntroScreenContainer = styled.div`
   }
 
   .left {
-    width: calc(50% - 32px + 4%);
+    width: calc(50% + 4%);
     align-items: flex-start;
     left: 0;
     clip-path: polygon(0 0, 100% 0%, 85% 100%, 0 100%);
@@ -147,7 +147,7 @@ export const StyledIntroScreenContainer = styled.div`
   }
 
   .right {
-    width: calc(50% - 32px + 5%);
+    width: calc(50% + 5%);
     right: 0;
     transform: translateX(100%);
     align-items: flex-end;

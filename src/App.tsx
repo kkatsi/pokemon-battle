@@ -1,17 +1,39 @@
 import { skipToken } from "@reduxjs/toolkit/query";
-import { useGetPokemonByNameQuery } from "./app/api";
-import useGetSelectedPokemons from "./hooks/useGetSelectedPokemons";
 import { useEffect, useState } from "react";
-import { wait } from "./utils/helper";
-import { IntroScreen } from "./components/IntroScreen/IntroScreen";
-import { PageLayout } from "./layouts/PageLayout.styled";
+import {
+  useGetPokemonByNameQuery,
+  useGetPokemonMovesetByNameQuery,
+} from "./app/api";
 import { BattleScreen } from "./components/BattleScreen/BattleScreen";
+import { IntroScreen } from "./components/IntroScreen/IntroScreen";
+import useGetSelectedPokemons from "./hooks/useGetSelectedPokemons";
+import { PageLayout } from "./layouts/PageLayout.styled";
+import { Pokemon } from "./types";
+import { wait } from "./utils/helper";
 
 function App() {
   const { you, enemy } = useGetSelectedPokemons();
   const { data: yourPokemon } = useGetPokemonByNameQuery(you ?? skipToken);
   const { data: enemyPokemon } = useGetPokemonByNameQuery(enemy ?? skipToken);
+  const { data: yourPokemonMoveset } = useGetPokemonMovesetByNameQuery(
+    yourPokemon
+      ? { name: yourPokemon.name, moves: yourPokemon.moveNames }
+      : skipToken
+  );
+  const { data: enemyPokemonMoveset } = useGetPokemonMovesetByNameQuery(
+    enemyPokemon
+      ? { name: enemyPokemon.name, moves: enemyPokemon.moveNames }
+      : skipToken
+  );
 
+  const yourPokemonWithMoves = {
+    ...yourPokemon,
+    moves: yourPokemonMoveset,
+  } as Pokemon;
+  const enemyPokemonWithMoves = {
+    ...enemyPokemon,
+    moves: enemyPokemonMoveset,
+  } as Pokemon;
   const [showBattleScreen, setShowBattleScreen] = useState(false);
 
   useEffect(() => {
@@ -21,13 +43,14 @@ function App() {
     })();
   }, []);
 
-  console.log(yourPokemon);
-
   return (
     <PageLayout>
       <IntroScreen you={yourPokemon} enemy={enemyPokemon} />
-      {showBattleScreen && (
-        <BattleScreen you={yourPokemon} enemy={enemyPokemon} />
+      {showBattleScreen && yourPokemonWithMoves && enemyPokemonWithMoves && (
+        <BattleScreen
+          you={yourPokemonWithMoves}
+          enemy={enemyPokemonWithMoves}
+        />
       )}
     </PageLayout>
   );

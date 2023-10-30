@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Pokemon } from "../types";
+import { Move, Pokemon } from "../types";
+import { getFourRandomMoves, replaceDashesWithSpaces } from "../utils/helper";
 
 // Define a service using a base URL and expected endpoints
 export const pokemonApi = createApi({
@@ -21,11 +22,36 @@ export const pokemonApi = createApi({
               .front_default,
         },
         type: pokemon.types[0].type.name,
+        moveNames: getFourRandomMoves(pokemon.moves),
       }),
+    }),
+    getPokemonMovesetByName: builder.query<
+      Move[],
+      { name: string; moves: string[] }
+    >({
+      async queryFn({ moves: moveNames }, _queryApi, _extraOptions, baseQuery) {
+        const moves: Move[] = [];
+        for (const moveName of moveNames) {
+          const moveRes = await baseQuery(`move/${moveName}`);
+          const moveData = moveRes.data as any;
+          moves.push({
+            name: replaceDashesWithSpaces(moveName),
+            accuracy: moveData.accuracy,
+            effect_chance: moveData.effect_chance,
+            power: moveData.power,
+            pp: moveData.pp,
+            type: moveData.type.name,
+            id: moveData.id,
+          });
+        }
+
+        return { data: moves };
+      },
     }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetPokemonByNameQuery } = pokemonApi;
+export const { useGetPokemonByNameQuery, useGetPokemonMovesetByNameQuery } =
+  pokemonApi;

@@ -8,7 +8,7 @@ export const StyledFooterContainer = styled.div`
   position: absolute;
   bottom: 0;
   left: 0;
-  border-top: 2px solid blue;
+  border-top: 5px solid blueviolet;
   padding: 4px 10%;
   display: flex;
   justify-content: center;
@@ -31,16 +31,30 @@ export const StyledFooterContainer = styled.div`
       background-color: transparent;
       outline: none;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       color: white;
       border: 0;
       cursor: pointer;
-      font-weight: 700;
+      text-transform: capitalize;
 
-      &:hover {
+      .name {
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .pp {
+        font-weight: 300;
+        font-size: 10px;
+      }
+
+      &:hover:not(:disabled) {
         box-shadow: 0 0 0 1px white;
         border-radius: 8px;
+      }
+      &:disabled {
+        color: gray;
+        cursor: not-allowed;
       }
     }
   }
