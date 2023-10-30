@@ -19,6 +19,17 @@ export const StyledBattleScreenContainer = styled.div`
   background-size: cover;
   animation: ${fadeIn} 1.5s ease-in-out forwards;
 
+  &:after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+  }
+
   .you,
   .enemy {
     position: absolute;
