@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Move, Pokemon } from "../types";
-import { getFourRandomMoves, replaceDashesWithSpaces } from "../utils/helper";
+import {
+  capitalizeFirstLetter,
+  getFourRandomMoves,
+  replaceDashesWithSpaces,
+} from "../utils/helper";
 
 // Define a service using a base URL and expected endpoints
 export const pokemonApi = createApi({
@@ -35,7 +39,7 @@ export const pokemonApi = createApi({
           const moveRes = await baseQuery(`move/${moveName}`);
           const moveData = moveRes.data as any;
           moves.push({
-            name: replaceDashesWithSpaces(moveName),
+            name: capitalizeFirstLetter(replaceDashesWithSpaces(moveName)),
             accuracy: moveData.accuracy,
             effect_chance: moveData.effect_chance,
             power: moveData.power,

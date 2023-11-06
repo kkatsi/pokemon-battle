@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
 import { StyledFooterContainer } from "./Footer.styled";
 import { Move } from "../../../types";
+import TypeWriter from "../../TypeWriter";
 
 interface FooterProps {
   displayText: string;
   moveSet: Move[];
-  onMoveSelect: (move: unknown) => void;
+  onMoveSelect: (move: Move) => void;
 }
 
 const Footer: React.FC<FooterProps> = ({
@@ -27,7 +28,9 @@ const Footer: React.FC<FooterProps> = ({
 
   return (
     <StyledFooterContainer>
-      <div className="text-container">{displayText}</div>
+      <div className="text-container">
+        <TypeWriter key={displayText} delay={35} text={displayText} />
+      </div>
       <div className="buttons-container">
         {moveSet.map((move, index) => (
           <button

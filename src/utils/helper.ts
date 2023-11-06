@@ -15,6 +15,10 @@ export const getFourRandomMoves = (
 export const replaceDashesWithSpaces = (string: string) =>
   string.toLowerCase().replaceAll("-", " ");
 
+export const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 function getRandomItem(arr: unknown[], n: number) {
   const result = new Array(n);
   let length = arr.length;

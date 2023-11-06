@@ -1,5 +1,6 @@
-import React from "react";
-import { Pokemon } from "../../types";
+import React, { useState } from "react";
+import useBattleSequence from "../../hooks/useBattleSequence";
+import { Move, Pokemon } from "../../types";
 import { StyledBattleScreenContainer } from "./BattleScreen.styled";
 import Footer from "./Footer";
 import HealthBar from "./HealthBar";
@@ -9,8 +10,17 @@ interface BattleScreenProps {
   enemy: Pokemon;
 }
 
-export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
+export const BattleScreen: React.FC<BattleScreenProps> = ({
+  you: initialYou,
+  enemy: initialEnemy,
+}) => {
   //  const enemyMove = useOpenAIResponse(1, you, enemy);
+  const [selectedMove, setSelectedMove] = useState<Move | null>(null);
+  const { you, enemy, text } = useBattleSequence({
+    you: initialYou,
+    enemy: initialEnemy,
+    selectedMove,
+  });
 
   return (
     <StyledBattleScreenContainer>
@@ -35,9 +45,9 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
         maxHealth={300}
       />
       <Footer
-        displayText="Lugia used Flamethrower!"
+        displayText={text}
         moveSet={you.moves ?? []}
-        onMoveSelect={(move) => console.log(move)}
+        onMoveSelect={(move) => setSelectedMove(move)}
       />
     </StyledBattleScreenContainer>
   );
