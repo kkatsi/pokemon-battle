@@ -58,12 +58,18 @@ export const StyledHealthBarContainer = styled.div`
       -webkit-text-stroke: 1px #333333;
     }
     .health-bar {
-      max-width: 55%;
+      width: 55%;
       height: 7px;
-      background-color: #08d10c;
+      background-color: #333333;
       border-radius: 100000px;
       box-shadow: 0 0 0 1px #333333;
       margin-top: -0.5px;
+      .bar {
+        width: 100%;
+        height: 100%;
+        background-color: #08d10c;
+        transition: width 3s ease-in-out;
+      }
     }
   }
   .health-stats-container {

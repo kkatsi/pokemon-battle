@@ -6,6 +6,7 @@ import {
   getFourRandomMoves,
   replaceDashesWithSpaces,
 } from "../utils/helper";
+import { calculateMaxStat } from "../utils/battle";
 
 // Define a service using a base URL and expected endpoints
 export const pokemonApi = createApi({
@@ -26,6 +27,15 @@ export const pokemonApi = createApi({
               .front_default,
         },
         type: pokemon.types[0].type.name,
+        maxHealth: calculateMaxStat(pokemon.stats[0].base_stat),
+        stats: {
+          [pokemon.stats[0].stat.name]: pokemon.stats[0].base_stat,
+          [pokemon.stats[1].stat.name]: pokemon.stats[1].base_stat,
+          [pokemon.stats[2].stat.name]: pokemon.stats[2].base_stat,
+          [pokemon.stats[3].stat.name]: pokemon.stats[3].base_stat,
+          [pokemon.stats[4].stat.name]: pokemon.stats[4].base_stat,
+          [pokemon.stats[5].stat.name]: pokemon.stats[5].base_stat,
+        },
         moveNames: getFourRandomMoves(pokemon.moves),
       }),
     }),
@@ -45,6 +55,9 @@ export const pokemonApi = createApi({
             power: moveData.power,
             pp: moveData.pp,
             type: moveData.type.name,
+            damage_type: moveData.damage_class.name,
+            target:
+              moveData.target.name === "selected-pokemon" ? "enemy" : "user",
             id: moveData.id,
           });
         }

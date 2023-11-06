@@ -16,6 +16,7 @@ const HealthBar: React.FC<HealthBarProps> = ({
   health,
   maxHealth,
 }) => {
+  console.log(health, maxHealth);
   return (
     <StyledHealthBarContainer
       style={{
@@ -33,7 +34,12 @@ const HealthBar: React.FC<HealthBarProps> = ({
       </div>
       <div className="health-bar-container">
         <span className="label">HP</span>
-        <div className="health-bar" style={{ width: "100%" }} />
+        <div className="health-bar">
+          <div
+            className="bar"
+            style={{ width: `${(health / maxHealth) * 100}%` }}
+          />
+        </div>
       </div>
       <div
         className="health-stats-container"

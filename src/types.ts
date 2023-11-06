@@ -7,7 +7,9 @@ export type Pokemon = {
   };
   type: string;
   moveNames: string[];
+  stats: Record<string, number>;
   moves?: Move[];
+  maxHealth: number;
 };
 
 export type Move = {
@@ -17,5 +19,7 @@ export type Move = {
   power: number;
   pp: number;
   type: string;
+  target: "enemy" | "user";
+  damage_type: "status" | "physical" | "special";
   id: number;
 };
