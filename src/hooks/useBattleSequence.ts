@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Move, Pokemon } from "../types";
 import { wait } from "../utils/helper";
-import { calculateMoveImpact } from "../utils/battle";
+import { calculateFirstAttacker, calculateMoveImpact } from "../utils/battle";
 
 const useBattleSequence = ({
   you,
   enemy,
-  selectedMove,
+  enemyMove,
+  yourMove,
   youElement,
   enemyElement,
 }: {
   you: Pokemon;
   enemy: Pokemon;
-  selectedMove: Move | null;
+  enemyMove: Move | null;
+  yourMove: Move | null;
   youElement?: HTMLElement | null;
   enemyElement?: HTMLElement | null;
 }) => {
@@ -20,35 +22,72 @@ const useBattleSequence = ({
   const [enemyHealth, setEnemyHealth] = useState(enemy.maxHealth);
   const [text, setText] = useState("");
   const [turn, setTurn] = useState(1);
-  const [player, setPlayer] = useState<"you" | "enemy">("you");
 
-  const animateCharacter = () => {
-    if (selectedMove)
-      if (player === "you" && enemyElement) {
-        enemyElement.classList.add("damaged");
-      }
-  };
+  const animateCharacter = useCallback(
+    async ({ target, type }: { target: Pokemon; type: string }) => {
+      const element = youElement?.classList.contains(target.name)
+        ? youElement
+        : enemyElement;
+      if (!element) return;
+      console.log(element);
+      element.classList.add(type);
+      await wait(1000);
+      element.classList.remove(type);
+    },
+    [enemyElement, youElement]
+  );
 
   useEffect(() => {
     setText(`What will ${you.name} do?`);
-  }, [player]);
+  }, [turn]);
 
   useEffect(() => {
-    // console.log(selectedMove);
     (async () => {
-      if (selectedMove) {
-        setText(`${you.name} used ${selectedMove?.name}!`);
-        await wait(2000);
-        setText("this");
-        const { damage, animate } = calculateMoveImpact(
-          selectedMove,
-          you,
-          enemy
-        );
-        setEnemyHealth((prevValue) => prevValue - damage);
+      if (enemyMove && yourMove && enemyElement && youElement) {
+        const { firstPlayer, secondPlayer, firstMove, secondMove } =
+          calculateFirstAttacker(you, enemy, yourMove, enemyMove);
+        setText(`${firstPlayer.name} used ${firstMove?.name}!`);
+        await wait(1500);
+        const { damage: firstDamage, animate: firstAnimation } =
+          calculateMoveImpact(firstMove, firstPlayer, secondPlayer);
+        await animateCharacter(firstAnimation);
+        firstPlayer.name === you.name
+          ? setEnemyHealth((prevValue) => {
+              const result = prevValue - firstDamage;
+              return result < 0 ? 0 : result;
+            })
+          : setYourHealth((prevValue) => {
+              const result = prevValue - firstDamage;
+              return result < 0 ? 0 : result;
+            });
+        await wait(2600);
+        setText(`${secondPlayer.name} used ${secondMove?.name}!`);
+        await wait(1500);
+        const { damage: secondDamage, animate: secondAnimation } =
+          calculateMoveImpact(secondMove, secondPlayer, firstPlayer);
+        await animateCharacter(secondAnimation);
+        secondPlayer.name === you.name
+          ? setEnemyHealth((prevValue) => {
+              const result = prevValue - secondDamage;
+              return result < 0 ? 0 : result;
+            })
+          : setYourHealth((prevValue) => {
+              const result = prevValue - secondDamage;
+              return result < 0 ? 0 : result;
+            });
+        await wait(2600);
+        setTurn((prevTurn) => prevTurn + 1);
       }
     })();
-  }, [enemy, selectedMove, you]);
+  }, [
+    animateCharacter,
+    enemy,
+    enemyElement,
+    enemyMove,
+    you,
+    youElement,
+    yourMove,
+  ]);
 
   return { yourHealth, enemyHealth, text };
 };

@@ -12,20 +12,23 @@ interface BattleScreenProps {
 
 export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
   //  const enemyMove = useOpenAIResponse(1, you, enemy);
-  const [selectedMove, setSelectedMove] = useState<Move | null>(null);
+  const [yourMove, setYourMove] = useState<Move | null>(null);
+  const [enemyMove, setEnemyMove] = useState<Move | null>(enemy.moves![0]);
   const youRef = useRef<HTMLDivElement>(null);
   const enemyRef = useRef<HTMLDivElement>(null);
   const { yourHealth, enemyHealth, text } = useBattleSequence({
     you,
     enemy,
-    selectedMove,
+    yourMove,
+    enemyMove,
     youElement: youRef.current,
     enemyElement: enemyRef.current,
   });
 
+  console.log(enemy);
   return (
     <StyledBattleScreenContainer>
-      <div className="you" ref={youRef}>
+      <div className={`you ${you.name}`} ref={youRef}>
         <img src={you.sprites.battle_back} alt="" />
       </div>
       <HealthBar
@@ -35,7 +38,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
         health={yourHealth}
         maxHealth={you.maxHealth}
       />
-      <div className="enemy" ref={enemyRef}>
+      <div className={`enemy ${enemy.name}`} ref={enemyRef}>
         <img src={enemy.sprites.battle_front} alt="" />
       </div>
       <HealthBar
@@ -48,7 +51,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
       <Footer
         displayText={text}
         moveSet={you.moves ?? []}
-        onMoveSelect={(move) => setSelectedMove(move)}
+        onMoveSelect={(move) => setYourMove(move)}
       />
     </StyledBattleScreenContainer>
   );

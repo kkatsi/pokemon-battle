@@ -1,5 +1,27 @@
 import { Move, Pokemon } from "../types";
 
+export const calculateFirstAttacker = (
+  you: Pokemon,
+  enemy: Pokemon,
+  yourMove: Move,
+  enemyMove: Move
+) => {
+  return calculateMaxStat(you.stats.speed) >=
+    calculateMaxStat(enemy.stats.speed)
+    ? {
+        firstPlayer: you,
+        secondPlayer: enemy,
+        firstMove: yourMove,
+        secondMove: enemyMove,
+      }
+    : {
+        firstPlayer: enemy,
+        secondPlayer: you,
+        firstMove: enemyMove,
+        secondMove: yourMove,
+      };
+};
+
 export const calculateMoveImpact = (
   move: Move,
   attacker: Pokemon,
@@ -7,8 +29,10 @@ export const calculateMoveImpact = (
 ) => {
   let damage = 0;
   if (move.damage_type === "status") {
-    if (move.target === "user") return { damage: 0, animate: "you" };
-    if (move.target === "enemy") return { damage: 0, animate: "enemy" };
+    if (move.target === "user")
+      return { damage: 0, animate: { target: attacker, type: "status" } };
+    if (move.target === "enemy")
+      return { damage: 0, animate: { target: defender, type: "status" } };
   }
   if (move.damage_type === "physical") {
     damage = calculatePokemonDamage(
@@ -26,7 +50,7 @@ export const calculateMoveImpact = (
       getTypeEffectiveness(attacker.type, defender.type)
     );
   }
-  return { damage, animate: "enemy" };
+  return { damage, animate: { target: defender, type: "damage" } };
 };
 
 export const calculatePokemonDamage = (

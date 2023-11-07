@@ -21,9 +21,13 @@ export const pokemonApi = createApi({
           default: pokemon.sprites.other["official-artwork"].front_default,
           battle_back:
             pokemon.sprites.versions["generation-v"]["black-white"].animated
+              .back_default ??
+            pokemon.sprites.versions["generation-v"]["black-white"]
               .back_default,
           battle_front:
             pokemon.sprites.versions["generation-v"]["black-white"].animated
+              .front_default ??
+            pokemon.sprites.versions["generation-v"]["black-white"]
               .front_default,
         },
         type: pokemon.types[0].type.name,

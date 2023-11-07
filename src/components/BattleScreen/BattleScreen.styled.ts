@@ -37,6 +37,13 @@ export const StyledBattleScreenContainer = styled.div`
       width: 200%;
       height: auto;
     }
+
+    &.damage {
+      img {
+        animation: ${fadeIn} 0.2s ease-in-out;
+        animation-iteration-count: infinite;
+      }
+    }
   }
 
   .you {
