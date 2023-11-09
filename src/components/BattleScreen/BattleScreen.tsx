@@ -20,7 +20,9 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
     you,
     enemy,
     yourMove,
+    setYourMove,
     enemyMove,
+    setEnemyMove,
     youElement: youRef.current,
     enemyElement: enemyRef.current,
   });

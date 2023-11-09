@@ -1,12 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  HEALTH_ANIMATION_DURATION,
+  TEXT_ANIMATION_DURATION,
+} from "../constants";
 import { Move, Pokemon } from "../types";
-import { wait } from "../utils/helper";
 import { calculateFirstAttacker, calculateMoveImpact } from "../utils/battle";
+import { wait } from "../utils/helper";
 
 const useBattleSequence = ({
   you,
   enemy,
   enemyMove,
+  setEnemyMove,
+  setYourMove,
   yourMove,
   youElement,
   enemyElement,
@@ -14,7 +20,9 @@ const useBattleSequence = ({
   you: Pokemon;
   enemy: Pokemon;
   enemyMove: Move | null;
+  setEnemyMove: (move: Move | null) => void;
   yourMove: Move | null;
+  setYourMove: (move: Move | null) => void;
   youElement?: HTMLElement | null;
   enemyElement?: HTMLElement | null;
 }) => {
@@ -37,53 +45,80 @@ const useBattleSequence = ({
     [enemyElement, youElement]
   );
 
+  const adjustHealth = useCallback(
+    (playerName: string, damage: number) => {
+      let result = 0;
+      playerName === enemy.name
+        ? setEnemyHealth((prevValue) => {
+            result = prevValue - damage;
+            return result < 0 ? 0 : result;
+          })
+        : setYourHealth((prevValue) => {
+            result = prevValue - damage;
+            return result < 0 ? 0 : result;
+          });
+      return result;
+    },
+    [enemy.name]
+  );
+
+  const attack = useCallback(
+    async (attacker: Pokemon, defender: Pokemon, move: Move) => {
+      setText(`${attacker.name} used ${move?.name}!`);
+      await wait(TEXT_ANIMATION_DURATION);
+      const { damage, animate } = calculateMoveImpact(move, attacker, defender);
+      await animateCharacter(animate);
+      const newDefendersHealth = adjustHealth(defender.name, damage);
+      await wait(HEALTH_ANIMATION_DURATION);
+      return newDefendersHealth;
+    },
+    [adjustHealth, animateCharacter]
+  );
+
+  const checkForBattleEnd = useCallback(
+    (health: number, attacker: Pokemon) => {
+      if (health > 0) return false;
+
+      setText(`You ${attacker.name === you.name ? "won" : "lost"} the battle!`);
+      return true;
+    },
+    [you.name]
+  );
+
   useEffect(() => {
     setText(`What will ${you.name} do?`);
-  }, [turn]);
+  }, [turn, you.name]);
 
   useEffect(() => {
     (async () => {
       if (enemyMove && yourMove && enemyElement && youElement) {
         const { firstPlayer, secondPlayer, firstMove, secondMove } =
           calculateFirstAttacker(you, enemy, yourMove, enemyMove);
-        setText(`${firstPlayer.name} used ${firstMove?.name}!`);
-        await wait(1500);
-        const { damage: firstDamage, animate: firstAnimation } =
-          calculateMoveImpact(firstMove, firstPlayer, secondPlayer);
-        await animateCharacter(firstAnimation);
-        firstPlayer.name === you.name
-          ? setEnemyHealth((prevValue) => {
-              const result = prevValue - firstDamage;
-              return result < 0 ? 0 : result;
-            })
-          : setYourHealth((prevValue) => {
-              const result = prevValue - firstDamage;
-              return result < 0 ? 0 : result;
-            });
-        await wait(2600);
-        setText(`${secondPlayer.name} used ${secondMove?.name}!`);
-        await wait(1500);
-        const { damage: secondDamage, animate: secondAnimation } =
-          calculateMoveImpact(secondMove, secondPlayer, firstPlayer);
-        await animateCharacter(secondAnimation);
-        secondPlayer.name === you.name
-          ? setEnemyHealth((prevValue) => {
-              const result = prevValue - secondDamage;
-              return result < 0 ? 0 : result;
-            })
-          : setYourHealth((prevValue) => {
-              const result = prevValue - secondDamage;
-              return result < 0 ? 0 : result;
-            });
-        await wait(2600);
+        let newDefendersHealth = await attack(
+          firstPlayer,
+          secondPlayer,
+          firstMove
+        );
+        if (checkForBattleEnd(newDefendersHealth, firstPlayer)) return;
+        newDefendersHealth = await attack(
+          secondPlayer,
+          firstPlayer,
+          secondMove
+        );
+        if (checkForBattleEnd(newDefendersHealth, secondPlayer)) return;
         setTurn((prevTurn) => prevTurn + 1);
+        setEnemyMove(enemy.moves![0]);
+        setYourMove(null);
       }
     })();
   }, [
-    animateCharacter,
+    attack,
+    checkForBattleEnd,
     enemy,
     enemyElement,
     enemyMove,
+    setEnemyMove,
+    setYourMove,
     you,
     youElement,
     yourMove,

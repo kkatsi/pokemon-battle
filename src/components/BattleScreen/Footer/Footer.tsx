@@ -29,7 +29,7 @@ const Footer: React.FC<FooterProps> = ({
   return (
     <StyledFooterContainer>
       <div className="text-container">
-        <TypeWriter key={displayText} delay={35} text={displayText} />
+        <TypeWriter key={displayText} delay={25} text={displayText} />
       </div>
       <div className="buttons-container">
         {moveSet.map((move, index) => (

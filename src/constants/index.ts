@@ -1,3 +1,6 @@
+export const HEALTH_ANIMATION_DURATION = 2600;
+export const TEXT_ANIMATION_DURATION = 1500;
+
 export const systemPrompt = (
   yourPokemonName: string,
   enemyPokemonName: string,
