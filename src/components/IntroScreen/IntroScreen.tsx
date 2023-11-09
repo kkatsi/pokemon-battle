@@ -10,8 +10,8 @@ interface IntroScreenProps {
 }
 
 export const IntroScreen: React.FC<IntroScreenProps> = ({ you, enemy }) => {
-  const yourColor = findColor(you?.type);
-  const enemyColor = findColor(enemy?.type);
+  const yourColor = findColor(you?.type[0]);
+  const enemyColor = findColor(enemy?.type[0]);
 
   const [showVS, setShowVS] = useState(false);
 

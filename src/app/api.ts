@@ -30,7 +30,9 @@ export const pokemonApi = createApi({
             pokemon.sprites.versions["generation-v"]["black-white"]
               .front_default,
         },
-        type: pokemon.types[0].type.name,
+        type: pokemon.types.map(
+          (type: { type: { name: string } }) => type.type.name
+        ),
         maxHealth: calculateMaxStat(pokemon.stats[0].base_stat),
         stats: {
           [pokemon.stats[0].stat.name]: pokemon.stats[0].base_stat,

@@ -62,22 +62,41 @@ const useBattleSequence = ({
     [enemy.name]
   );
 
+  const handleEffectivenessMessage = useCallback((effectiveness: number) => {
+    switch (effectiveness) {
+      case 0.5:
+        setText("It's not very effective...");
+        break;
+      case 2:
+        setText("It's super effetive!");
+        break;
+      case 4:
+        setText("It's super effective!");
+        break;
+      default:
+        return;
+    }
+  }, []);
+
   const attack = useCallback(
     async (attacker: Pokemon, defender: Pokemon, move: Move) => {
       setText(`${attacker.name} used ${move?.name}!`);
       await wait(TEXT_ANIMATION_DURATION);
       const { damage, animate } = calculateMoveImpact(move, attacker, defender);
-      await animateCharacter(animate);
-      const newDefendersHealth = adjustHealth(defender.name, damage);
+      if (!animate) setText("But it failed...");
+      else await animateCharacter(animate);
+      console.log(damage);
+      if (damage.value) handleEffectivenessMessage(damage.effectiveness);
+      const newDefendersHealth = adjustHealth(defender.name, damage.value);
       await wait(HEALTH_ANIMATION_DURATION);
       return newDefendersHealth;
     },
-    [adjustHealth, animateCharacter]
+    [adjustHealth, animateCharacter, handleEffectivenessMessage]
   );
 
   const checkForBattleEnd = useCallback(
-    (health: number, attacker: Pokemon) => {
-      if (health > 0) return false;
+    (health: number | undefined, attacker: Pokemon) => {
+      if (!health || health > 0) return false;
 
       setText(`You ${attacker.name === you.name ? "won" : "lost"} the battle!`);
       return true;

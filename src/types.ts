@@ -5,7 +5,7 @@ export type Pokemon = {
     battle_front: string;
     battle_back: string;
   };
-  type: string;
+  type: string[];
   moveNames: string[];
   stats: Record<string, number>;
   moves?: Move[];

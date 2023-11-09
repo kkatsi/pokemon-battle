@@ -22,24 +22,41 @@ export const calculateFirstAttacker = (
       };
 };
 
+const isMoveSuccessFull = (accuracy: number) => getARandomChance() <= accuracy;
+
 export const calculateMoveImpact = (
   move: Move,
   attacker: Pokemon,
   defender: Pokemon
 ) => {
   let damage = 0;
+  if (move.accuracy && !isMoveSuccessFull(move.accuracy))
+    return {
+      damage: { value: damage, effectiveness: 0 },
+      animate: null,
+    };
   if (move.damage_type === "status") {
     if (move.target === "user")
-      return { damage: 0, animate: { target: attacker, type: "status" } };
+      return {
+        damage: { value: damage, effectiveness: 0 },
+
+        animate: { target: attacker, type: "status" },
+      };
     if (move.target === "enemy")
-      return { damage: 0, animate: { target: defender, type: "status" } };
+      return {
+        damage: { value: damage, effectiveness: 0 },
+
+        animate: { target: defender, type: "status" },
+      };
   }
+  const effectiveness = getTypeEffectiveness(move.type, defender.type);
+
   if (move.damage_type === "physical") {
     damage = calculatePokemonDamage(
       calculateMaxStat(attacker.stats.attack),
       calculateMaxStat(defender.stats.defense),
       move.power,
-      getTypeEffectiveness(attacker.type, defender.type)
+      effectiveness
     );
   }
   if (move.damage_type === "special") {
@@ -47,10 +64,13 @@ export const calculateMoveImpact = (
       calculateMaxStat(attacker.stats["special-attack"]),
       calculateMaxStat(defender.stats["special-defense"]),
       move.power,
-      getTypeEffectiveness(attacker.type, defender.type)
+      effectiveness
     );
   }
-  return { damage, animate: { target: defender, type: "damage" } };
+  return {
+    damage: { value: damage, effectiveness },
+    animate: { target: defender, type: "damage" },
+  };
 };
 
 export const calculatePokemonDamage = (
@@ -86,9 +106,15 @@ export const calculateMaxStat = (
   return Math.floor(maxStat);
 };
 
-const getTypeEffectiveness = (attackerType: string, defenderType: string) => {
-  const effectiveness = typeEffectiveness[attackerType]?.[defenderType];
-  return effectiveness !== undefined ? effectiveness : 1; // Default to 1 if not found
+export const getARandomChance = () => Math.random() * 100;
+
+const getTypeEffectiveness = (moveType: string, defenderType: string[]) => {
+  const effectiveness = defenderType.map(
+    (type) => typeEffectiveness[type]?.[moveType]
+  );
+  // .reduce((a, b) => a * b);
+  console.log(effectiveness);
+  return effectiveness.reduce((a, b) => a * b); // Default to 1 if not found
 };
 
 const typeEffectiveness: Record<string, Record<string, number>> = {
@@ -115,40 +141,40 @@ const typeEffectiveness: Record<string, Record<string, number>> = {
   fire: {
     normal: 1,
     fire: 0.5,
-    water: 2,
+    water: 0.5,
     electric: 1,
-    grass: 0.5,
-    ice: 0.5,
+    grass: 2,
+    ice: 2,
     fighting: 1,
     poison: 1,
     ground: 2,
     flying: 1,
     psychic: 1,
-    bug: 0.5,
-    rock: 2,
+    bug: 2,
+    rock: 0.5,
     ghost: 1,
-    steel: 0.5,
+    steel: 2,
     dragon: 0.5,
     dark: 1,
-    fairy: 0.5,
+    fairy: 1,
   },
   water: {
     normal: 1,
-    fire: 0.5,
+    fire: 2,
     water: 0.5,
-    electric: 2,
-    grass: 2,
-    ice: 0.5,
+    electric: 1,
+    grass: 0.5,
+    ice: 1,
     fighting: 1,
     poison: 1,
-    ground: 1,
+    ground: 2,
     flying: 1,
     psychic: 1,
-    bug: 2,
-    rock: 1,
+    bug: 0,
+    rock: 2,
     ghost: 1,
-    steel: 0.5,
-    dragon: 1,
+    steel: 1,
+    dragon: 0.5,
     dark: 1,
     fairy: 1,
   },
