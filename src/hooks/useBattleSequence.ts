@@ -4,7 +4,7 @@ import {
   TEXT_ANIMATION_DURATION,
 } from "../constants";
 import { Move, Pokemon } from "../types";
-import { calculateFirstAttacker, calculateMoveImpact } from "../utils/battle";
+import { calculateAttacker, calculateMoveImpact } from "../utils/battle";
 import { wait } from "../utils/helper";
 
 const useBattleSequence = ({
@@ -29,7 +29,12 @@ const useBattleSequence = ({
   const [yourHealth, setYourHealth] = useState(you.maxHealth);
   const [enemyHealth, setEnemyHealth] = useState(enemy.maxHealth);
   const [text, setText] = useState("");
+  const [isTurnInProgress, setIsTurnInProgress] = useState(false);
+  const [turnState, setTurnState] = useState<"first-half" | "second-half">(
+    "first-half"
+  );
   const [turn, setTurn] = useState(1);
+  const [isBattleEnd, setIsBattleEnd] = useState(false);
 
   const animateCharacter = useCallback(
     async ({ target, type }: { target: Pokemon; type: string }) => {
@@ -37,7 +42,6 @@ const useBattleSequence = ({
         ? youElement
         : enemyElement;
       if (!element) return;
-      console.log(element);
       element.classList.add(type);
       await wait(1000);
       element.classList.remove(type);
@@ -47,17 +51,16 @@ const useBattleSequence = ({
 
   const adjustHealth = useCallback(
     (playerName: string, damage: number) => {
-      let result = 0;
-      playerName === enemy.name
-        ? setEnemyHealth((prevValue) => {
-            result = prevValue - damage;
-            return result < 0 ? 0 : result;
-          })
-        : setYourHealth((prevValue) => {
-            result = prevValue - damage;
-            return result < 0 ? 0 : result;
-          });
-      return result;
+      if (playerName === enemy.name)
+        setEnemyHealth((prevValue) => {
+          const result = prevValue - damage;
+          return result < 0 ? 0 : result;
+        });
+      else
+        setYourHealth((prevValue) => {
+          const result = prevValue - damage;
+          return result < 0 ? 0 : result;
+        });
     },
     [enemy.name]
   );
@@ -82,68 +85,83 @@ const useBattleSequence = ({
     async (attacker: Pokemon, defender: Pokemon, move: Move) => {
       setText(`${attacker.name} used ${move?.name}!`);
       await wait(TEXT_ANIMATION_DURATION);
-      const { damage, animate } = calculateMoveImpact(move, attacker, defender);
+      const { damage, animate, effect } = calculateMoveImpact(
+        move,
+        attacker,
+        defender
+      );
+      console.log(effect);
       if (!animate) setText("But it failed...");
       else await animateCharacter(animate);
-      console.log(damage);
       if (damage.value) handleEffectivenessMessage(damage.effectiveness);
-      const newDefendersHealth = adjustHealth(defender.name, damage.value);
+      adjustHealth(defender.name, damage.value);
       await wait(HEALTH_ANIMATION_DURATION);
-      return newDefendersHealth;
     },
     [adjustHealth, animateCharacter, handleEffectivenessMessage]
   );
 
-  const checkForBattleEnd = useCallback(
-    (health: number | undefined, attacker: Pokemon) => {
-      if (!health || health > 0) return false;
-
-      setText(`You ${attacker.name === you.name ? "won" : "lost"} the battle!`);
-      return true;
-    },
-    [you.name]
-  );
+  const handleTurnEnd = useCallback(() => {
+    setTurn((prevTurn) => prevTurn + 1);
+    setEnemyMove(enemy.moves![0]);
+    setYourMove(null);
+    setIsTurnInProgress(false);
+  }, [enemy.moves, setEnemyMove, setYourMove]);
 
   useEffect(() => {
-    setText(`What will ${you.name} do?`);
-  }, [turn, you.name]);
+    if (!isBattleEnd) setText(`What will ${you.name} do?`);
+  }, [turn, you.name, isBattleEnd]);
 
   useEffect(() => {
     (async () => {
-      if (enemyMove && yourMove && enemyElement && youElement) {
+      if (enemyMove && yourMove && enemyElement && youElement && !isBattleEnd) {
+        setIsTurnInProgress(true);
         const { firstPlayer, secondPlayer, firstMove, secondMove } =
-          calculateFirstAttacker(you, enemy, yourMove, enemyMove);
-        let newDefendersHealth = await attack(
-          firstPlayer,
-          secondPlayer,
-          firstMove
-        );
-        if (checkForBattleEnd(newDefendersHealth, firstPlayer)) return;
-        newDefendersHealth = await attack(
-          secondPlayer,
-          firstPlayer,
-          secondMove
-        );
-        if (checkForBattleEnd(newDefendersHealth, secondPlayer)) return;
-        setTurn((prevTurn) => prevTurn + 1);
-        setEnemyMove(enemy.moves![0]);
-        setYourMove(null);
+          calculateAttacker(you, enemy, yourMove, enemyMove);
+
+        turnState === "first-half"
+          ? await attack(firstPlayer, secondPlayer, firstMove)
+          : await attack(secondPlayer, firstPlayer, secondMove);
+
+        setTurnState((prevState) => {
+          switch (prevState) {
+            case "first-half":
+              return "second-half";
+            case "second-half":
+              handleTurnEnd();
+              return "first-half";
+          }
+        });
       }
     })();
   }, [
     attack,
-    checkForBattleEnd,
     enemy,
     enemyElement,
     enemyMove,
-    setEnemyMove,
-    setYourMove,
+    handleTurnEnd,
+    turnState,
     you,
     youElement,
     yourMove,
+    isBattleEnd,
   ]);
 
-  return { yourHealth, enemyHealth, text };
+  useEffect(() => {
+    (async () => {
+      if (yourHealth && enemyHealth) return;
+      setIsBattleEnd(true);
+      await wait(HEALTH_ANIMATION_DURATION);
+      if (yourHealth === 0) {
+        youElement?.classList.add("loser");
+        setText(`You lost the battle!`);
+      } else if (enemyHealth === 0) {
+        enemyElement?.classList.add("loser");
+        setText(`You won the battle!`);
+      }
+    })();
+  }, [enemyElement, enemyHealth, handleTurnEnd, youElement, yourHealth]);
+
+  return { yourHealth, enemyHealth, text, isTurnInProgress, isBattleEnd };
 };
 
 export default useBattleSequence;

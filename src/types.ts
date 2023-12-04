@@ -16,6 +16,7 @@ export type Move = {
   name: string;
   accuracy: number;
   effect_chance: number;
+  short_effect: string;
   power: number;
   pp: number;
   type: string;
@@ -23,3 +24,64 @@ export type Move = {
   damage_type: "status" | "physical" | "special";
   id: number;
 };
+
+export enum ConditionName {
+  PARALYSIS = "PAR",
+  POISON = "POI",
+  BURN = "BUR",
+  FREEZE = "FRO",
+  SLEEP = "SLE",
+  UNKNOWN = "UNK",
+  CONFUSION = "CONF",
+}
+
+export type Paralysis = {
+  name: ConditionName.PARALYSIS;
+  speed: number;
+  accuracy: number;
+  chanceToHit: number;
+};
+
+export type Poison = {
+  name: ConditionName.POISON;
+  extraDamage: number;
+  chanceToHit: number;
+};
+
+export type Burn = {
+  name: ConditionName.BURN;
+  extraDamage: number;
+  attack: 0.5;
+  chanceToHit: number;
+};
+
+export type Freeze = {
+  name: ConditionName.FREEZE;
+  chanceToReset: number;
+  chanceToHit: number;
+};
+
+export type Sleep = {
+  name: ConditionName.SLEEP;
+  chanceToReset: number;
+  chanceToHit: number;
+};
+
+export type Confusion = {
+  name: ConditionName.CONFUSION;
+  chanceToReset: number;
+  chanceToHit: number;
+};
+
+export type UnknownEffect = {
+  name: ConditionName.UNKNOWN;
+};
+
+export type Condition =
+  | Paralysis
+  | Poison
+  | Burn
+  | Freeze
+  | Sleep
+  | Confusion
+  | UnknownEffect;

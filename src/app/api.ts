@@ -57,6 +57,7 @@ export const pokemonApi = createApi({
           moves.push({
             name: capitalizeFirstLetter(replaceDashesWithSpaces(moveName)),
             accuracy: moveData.accuracy,
+            short_effect: moveData.effect_entries![0]?.short_effect,
             effect_chance: moveData.effect_chance,
             power: moveData.power,
             pp: moveData.pp,

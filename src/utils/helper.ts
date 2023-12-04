@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const wait = (ms: number) =>
   new Promise<void>((res) => {
     setTimeout(() => {
@@ -8,7 +9,12 @@ export const wait = (ms: number) =>
 export const getFourRandomMoves = (
   moveList: { move: { name: string; url: string } }[]
 ) => {
-  const randomMoves = getRandomItem(moveList, 4);
+  const onlyFifthGenMoves = moveList.filter((move: any) =>
+    move.version_group_details.some(
+      (version: any) => version.version_group.name === "black-white"
+    )
+  );
+  const randomMoves = getRandomItem(onlyFifthGenMoves, 4);
   return randomMoves.map((move) => move.move.name as string);
 };
 

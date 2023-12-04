@@ -40,8 +40,12 @@ export const StyledBattleScreenContainer = styled.div`
 
     &.damage {
       img {
-        animation: ${fadeIn} 0.2s ease-in-out;
-        animation-iteration-count: infinite;
+        animation: ${fadeIn} 0.2s ease-in-out infinite;
+      }
+    }
+    &.loser {
+      img {
+        animation: ${fadeIn} reverse 1s ease-in-out forwards;
       }
     }
   }

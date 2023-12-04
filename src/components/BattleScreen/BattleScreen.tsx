@@ -16,18 +16,18 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
   const [enemyMove, setEnemyMove] = useState<Move | null>(enemy.moves![0]);
   const youRef = useRef<HTMLDivElement>(null);
   const enemyRef = useRef<HTMLDivElement>(null);
-  const { yourHealth, enemyHealth, text } = useBattleSequence({
-    you,
-    enemy,
-    yourMove,
-    setYourMove,
-    enemyMove,
-    setEnemyMove,
-    youElement: youRef.current,
-    enemyElement: enemyRef.current,
-  });
+  const { yourHealth, enemyHealth, text, isTurnInProgress, isBattleEnd } =
+    useBattleSequence({
+      you,
+      enemy,
+      yourMove,
+      setYourMove,
+      enemyMove,
+      setEnemyMove,
+      youElement: youRef.current,
+      enemyElement: enemyRef.current,
+    });
 
-  console.log(enemy);
   return (
     <StyledBattleScreenContainer>
       <div className={`you ${you.name}`} ref={youRef}>
@@ -51,6 +51,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
         maxHealth={enemy.maxHealth}
       />
       <Footer
+        disabled={isTurnInProgress || isBattleEnd}
         displayText={text}
         moveSet={you.moves ?? []}
         onMoveSelect={(move) => setYourMove(move)}

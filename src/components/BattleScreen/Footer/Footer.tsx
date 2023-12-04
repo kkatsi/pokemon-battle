@@ -7,12 +7,14 @@ interface FooterProps {
   displayText: string;
   moveSet: Move[];
   onMoveSelect: (move: Move) => void;
+  disabled: boolean;
 }
 
 const Footer: React.FC<FooterProps> = ({
   displayText,
   moveSet,
   onMoveSelect,
+  disabled,
 }) => {
   const [currentPPs, setCurrentPPs] = useState(moveSet.map((move) => move.pp));
 
@@ -31,20 +33,22 @@ const Footer: React.FC<FooterProps> = ({
       <div className="text-container">
         <TypeWriter key={displayText} delay={25} text={displayText} />
       </div>
-      <div className="buttons-container">
-        {moveSet.map((move, index) => (
-          <button
-            disabled={currentPPs[index] < 1}
-            key={move.id}
-            onClick={() => onMoveClick(move, index)}
-          >
-            <span className="name">{move.name}</span>
-            <span className="pp">
-              {currentPPs[index]} / {move.pp}
-            </span>
-          </button>
-        ))}
-      </div>
+      {!disabled && (
+        <div className={`buttons-container`}>
+          {moveSet.map((move, index) => (
+            <button
+              disabled={currentPPs[index] < 1}
+              key={move.id}
+              onClick={() => onMoveClick(move, index)}
+            >
+              <span className="name">{move.name}</span>
+              <span className="pp">
+                {currentPPs[index]} / {move.pp}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
     </StyledFooterContainer>
   );
 };

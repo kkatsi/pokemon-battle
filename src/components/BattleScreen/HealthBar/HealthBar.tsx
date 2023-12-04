@@ -1,5 +1,6 @@
 import React from "react";
 import { StyledHealthBarContainer } from "./HealthBar.styled";
+import useCountDown from "../../../hooks/useCountDown";
 
 interface HealthBarProps {
   player: "you" | "enemy";
@@ -16,7 +17,7 @@ const HealthBar: React.FC<HealthBarProps> = ({
   health,
   maxHealth,
 }) => {
-  console.log(health, maxHealth);
+  const animatedHealth = useCountDown(health);
   return (
     <StyledHealthBarContainer
       style={{
@@ -47,7 +48,7 @@ const HealthBar: React.FC<HealthBarProps> = ({
       >
         {player === "you" && (
           <span className="stat">
-            {health} / {maxHealth}
+            {animatedHealth} / {maxHealth}
           </span>
         )}
       </div>
