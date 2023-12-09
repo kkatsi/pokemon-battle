@@ -42,6 +42,7 @@ const useBattleSequence = ({
         ? youElement
         : enemyElement;
       if (!element) return;
+      console.log(type);
       element.classList.add(type);
       await wait(1000);
       element.classList.remove(type);

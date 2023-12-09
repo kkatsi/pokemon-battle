@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { StyledHealthBarContainer } from "./HealthBar.styled";
-import useCountDown from "../../../hooks/useCountDown";
+import { animateValue } from "../../../utils/helper";
+import { HEALTH_ANIMATION_DURATION } from "../../../constants";
 
 interface HealthBarProps {
   player: "you" | "enemy";
@@ -17,7 +18,23 @@ const HealthBar: React.FC<HealthBarProps> = ({
   health,
   maxHealth,
 }) => {
-  const animatedHealth = useCountDown(health);
+  const animatedHealthRef = useRef(null);
+  const [previousHealth, setPreviousHealth] = useState<number>();
+
+  useEffect(() => {
+    if (animatedHealthRef.current) {
+      if (previousHealth && previousHealth !== health) {
+        animateValue(
+          animatedHealthRef.current,
+          previousHealth,
+          health,
+          HEALTH_ANIMATION_DURATION
+        );
+      }
+      setPreviousHealth(health);
+    }
+  }, [previousHealth, health]);
+
   return (
     <StyledHealthBarContainer
       style={{
@@ -48,7 +65,7 @@ const HealthBar: React.FC<HealthBarProps> = ({
       >
         {player === "you" && (
           <span className="stat">
-            {animatedHealth} / {maxHealth}
+            <span ref={animatedHealthRef}>{health}</span> / {maxHealth}
           </span>
         )}
       </div>

@@ -43,6 +43,11 @@ export const StyledBattleScreenContainer = styled.div`
         animation: ${fadeIn} 0.2s ease-in-out infinite;
       }
     }
+    &.status {
+      img {
+        filter: invert(100%);
+      }
+    }
     &.loser {
       img {
         animation: ${fadeIn} reverse 1s ease-in-out forwards;
