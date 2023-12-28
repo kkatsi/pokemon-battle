@@ -16,17 +16,24 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
   const [enemyMove, setEnemyMove] = useState<Move | null>(enemy.moves![0]);
   const youRef = useRef<HTMLDivElement>(null);
   const enemyRef = useRef<HTMLDivElement>(null);
-  const { yourHealth, enemyHealth, text, isTurnInProgress, isBattleEnd } =
-    useBattleSequence({
-      you,
-      enemy,
-      yourMove,
-      setYourMove,
-      enemyMove,
-      setEnemyMove,
-      youElement: youRef.current,
-      enemyElement: enemyRef.current,
-    });
+  const {
+    yourHealth,
+    enemyHealth,
+    yourSideEffect,
+    enemySideEffect,
+    text,
+    isTurnInProgress,
+    isBattleEnd,
+  } = useBattleSequence({
+    you,
+    enemy,
+    yourMove,
+    setYourMove,
+    enemyMove,
+    setEnemyMove,
+    youElement: youRef.current,
+    enemyElement: enemyRef.current,
+  });
 
   return (
     <StyledBattleScreenContainer>
@@ -39,6 +46,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
         level={100}
         health={yourHealth}
         maxHealth={you.maxHealth}
+        sideEffect={yourSideEffect?.name}
       />
       <div className={`enemy ${enemy.name}`} ref={enemyRef}>
         <img src={enemy.sprites.battle_front} alt="" />
@@ -49,6 +57,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
         level={100}
         health={enemyHealth}
         maxHealth={enemy.maxHealth}
+        sideEffect={enemySideEffect?.name}
       />
       <Footer
         disabled={isTurnInProgress || isBattleEnd}

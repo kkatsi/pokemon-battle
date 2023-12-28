@@ -16,7 +16,8 @@ export const pokemonApi = createApi({
     getPokemonByName: builder.query<Pokemon, string>({
       query: (name) => `pokemon/${name}`,
       transformResponse: (pokemon: any) => ({
-        name: pokemon.name,
+        name: capitalizeFirstLetter(pokemon.name),
+        originalName: pokemon.name,
         sprites: {
           default: pokemon.sprites.other["official-artwork"].front_default,
           battle_back:
@@ -35,12 +36,25 @@ export const pokemonApi = createApi({
         ),
         maxHealth: calculateMaxStat(pokemon.stats[0].base_stat),
         stats: {
-          [pokemon.stats[0].stat.name]: pokemon.stats[0].base_stat,
-          [pokemon.stats[1].stat.name]: pokemon.stats[1].base_stat,
-          [pokemon.stats[2].stat.name]: pokemon.stats[2].base_stat,
-          [pokemon.stats[3].stat.name]: pokemon.stats[3].base_stat,
-          [pokemon.stats[4].stat.name]: pokemon.stats[4].base_stat,
-          [pokemon.stats[5].stat.name]: pokemon.stats[5].base_stat,
+          [pokemon.stats[0].stat.name]: calculateMaxStat(
+            pokemon.stats[0].base_stat
+          ),
+          [pokemon.stats[1].stat.name]: calculateMaxStat(
+            pokemon.stats[1].base_stat
+          ),
+          [pokemon.stats[2].stat.name]: calculateMaxStat(
+            pokemon.stats[2].base_stat
+          ),
+          [pokemon.stats[3].stat.name]: calculateMaxStat(
+            pokemon.stats[3].base_stat
+          ),
+          [pokemon.stats[4].stat.name]: calculateMaxStat(
+            pokemon.stats[4].base_stat
+          ),
+          [pokemon.stats[5].stat.name]: calculateMaxStat(
+            pokemon.stats[5].base_stat
+          ),
+          accuracy: 100,
         },
         moveNames: getFourRandomMoves(pokemon.moves),
       }),

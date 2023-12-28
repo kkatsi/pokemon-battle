@@ -1,5 +1,6 @@
 export type Pokemon = {
   name: string;
+  originalName: string;
   sprites: {
     default: string;
     battle_front: string;
@@ -28,11 +29,11 @@ export type Move = {
 export enum ConditionName {
   PARALYSIS = "PAR",
   POISON = "POI",
-  BURN = "BUR",
-  FREEZE = "FRO",
-  SLEEP = "SLE",
+  BURN = "BRN",
+  FREEZE = "FRZ",
+  SLEEP = "SLP",
   UNKNOWN = "UNK",
-  CONFUSION = "CONF",
+  CONFUSION = "CNF",
 }
 
 export type Paralysis = {

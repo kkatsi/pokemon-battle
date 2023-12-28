@@ -1,29 +1,35 @@
-import { Move, Pokemon } from "../types";
+import { Condition, Move, Pokemon } from "../types";
 import { getConditionEffect } from "./moves";
 
 export const calculateAttacker = (
   you: Pokemon,
   enemy: Pokemon,
   yourMove: Move,
-  enemyMove: Move
+  enemyMove: Move,
+  yourSideEffect?: Condition,
+  enemySideEffect?: Condition
 ) => {
-  return calculateMaxStat(you.stats.speed) >=
-    calculateMaxStat(enemy.stats.speed)
+  return you.stats.speed >= enemy.stats.speed
     ? {
         firstPlayer: you,
         secondPlayer: enemy,
         firstMove: yourMove,
         secondMove: enemyMove,
+        firstSideEffect: yourSideEffect,
+        secondSideEffect: enemySideEffect,
       }
     : {
         firstPlayer: enemy,
         secondPlayer: you,
         firstMove: enemyMove,
         secondMove: yourMove,
+        firstSideEffect: enemySideEffect,
+        secondSideEffect: yourSideEffect,
       };
 };
 
-const isMoveSuccessFull = (accuracy: number) => getARandomChance() <= accuracy;
+export const isSuccessFull = (accuracy: number) =>
+  getARandomChanceBetweenOneAndOneHundred() <= accuracy;
 
 export const calculateMoveImpact = (
   move: Move,
@@ -31,47 +37,45 @@ export const calculateMoveImpact = (
   defender: Pokemon
 ) => {
   let damage = 0;
-  if (move.accuracy && !isMoveSuccessFull(move.accuracy))
+  if (move.accuracy && !isSuccessFull(move.accuracy))
     return {
       damage: { value: damage, effectiveness: 0 },
-      effect: null,
+      sideEffect: null,
       animate: null,
     };
   if (move.damage_type === "status") {
-    if (move.target === "user")
-      return {
-        damage: { value: damage, effectiveness: 0 },
-        effect: null,
-        animate: { target: attacker, type: "status" },
-      };
-    if (move.target === "enemy")
-      return {
-        damage: { value: damage, effectiveness: 0 },
-        effect: null,
-        animate: { target: defender, type: "status" },
-      };
+    return {
+      damage: { value: damage, effectiveness: 0 },
+      sideEffect: move.short_effect
+        ? getConditionEffect(move.short_effect, 100)
+        : null,
+      animate: {
+        target: move.target === "user" ? attacker : defender,
+        type: "status",
+      },
+    };
   }
   const effectiveness = getTypeEffectiveness(move.type, defender.type);
 
   if (move.damage_type === "physical") {
     damage = calculatePokemonDamage(
-      calculateMaxStat(attacker.stats.attack),
-      calculateMaxStat(defender.stats.defense),
+      attacker.stats.attack,
+      defender.stats.defense,
       move.power,
       effectiveness
     );
   }
   if (move.damage_type === "special") {
     damage = calculatePokemonDamage(
-      calculateMaxStat(attacker.stats["special-attack"]),
-      calculateMaxStat(defender.stats["special-defense"]),
+      attacker.stats["special-attack"],
+      defender.stats["special-defense"],
       move.power,
       effectiveness
     );
   }
   return {
     damage: { value: damage, effectiveness },
-    effect:
+    sideEffect:
       move.short_effect && move.effect_chance
         ? getConditionEffect(move.short_effect, move.effect_chance)
         : null,
@@ -112,7 +116,8 @@ export const calculateMaxStat = (
   return Math.floor(maxStat);
 };
 
-export const getARandomChance = () => Math.random() * 100;
+export const getARandomChanceBetweenOneAndOneHundred = () =>
+  Math.floor(Math.random() * (100 - 1 + 1)) + 1;
 
 const getTypeEffectiveness = (moveType: string, defenderType: string[]) => {
   const effectiveness = defenderType.map(

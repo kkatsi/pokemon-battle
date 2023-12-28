@@ -51,6 +51,18 @@ export const StyledHealthBarContainer = styled.div`
     box-shadow: 0 0 0 1px #333333;
     gap: 4px;
     max-height: 12px;
+    position: relative;
+    .side-effect-label {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 0 4px;
+      color: white;
+    }
     .label {
       font-family: "Alfa Slab One", sans-serif;
       font-size: 12px;

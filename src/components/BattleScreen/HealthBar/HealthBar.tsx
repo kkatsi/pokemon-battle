@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from "react";
 import { StyledHealthBarContainer } from "./HealthBar.styled";
 import { animateValue } from "../../../utils/helper";
 import { HEALTH_ANIMATION_DURATION } from "../../../constants";
+import { findColor } from "../../../utils/color";
+import { ConditionName } from "../../../types";
 
 interface HealthBarProps {
   player: "you" | "enemy";
@@ -9,6 +11,7 @@ interface HealthBarProps {
   level: number;
   health: number;
   maxHealth: number;
+  sideEffect?: string;
 }
 
 const HealthBar: React.FC<HealthBarProps> = ({
@@ -17,6 +20,7 @@ const HealthBar: React.FC<HealthBarProps> = ({
   level,
   health,
   maxHealth,
+  sideEffect,
 }) => {
   const animatedHealthRef = useRef(null);
   const [previousHealth, setPreviousHealth] = useState<number>();
@@ -35,6 +39,30 @@ const HealthBar: React.FC<HealthBarProps> = ({
     }
   }, [previousHealth, health]);
 
+  const calculateEffectBackgroundColor = (sideEffect: string) => {
+    let backgroundColor = "black";
+    switch (sideEffect) {
+      case ConditionName.FREEZE:
+        backgroundColor = findColor("ice");
+        break;
+      case ConditionName.BURN:
+        backgroundColor = findColor("fire");
+        break;
+      case ConditionName.PARALYSIS:
+        backgroundColor = findColor("electric");
+        break;
+      case ConditionName.POISON:
+        backgroundColor = findColor("poison");
+        break;
+      case ConditionName.SLEEP:
+        backgroundColor = findColor("normal");
+        break;
+      default:
+        break;
+    }
+    return backgroundColor;
+  };
+
   return (
     <StyledHealthBarContainer
       style={{
@@ -51,6 +79,14 @@ const HealthBar: React.FC<HealthBarProps> = ({
         </div>
       </div>
       <div className="health-bar-container">
+        {sideEffect && (
+          <div
+            className="side-effect-label"
+            style={{ background: calculateEffectBackgroundColor(sideEffect) }}
+          >
+            {sideEffect}
+          </div>
+        )}
         <span className="label">HP</span>
         <div className="health-bar">
           <div

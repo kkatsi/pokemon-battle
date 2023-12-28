@@ -36,22 +36,22 @@ export const getConditionEffect = (
   if (isFrozen(effectString))
     return {
       name: ConditionName.FREEZE,
-      chanceToReset: 0.2,
+      chanceToReset: 20,
       chanceToHit: effectChance ?? 1,
     } as Freeze;
   if (isSlept(effectString))
     return {
       name: ConditionName.SLEEP,
-      chanceToReset: 0.2,
+      chanceToReset: 20,
       chanceToHit: effectChance ?? 1,
     } as Sleep;
   if (isConfused(effectString))
     return {
       name: ConditionName.CONFUSION,
-      chanceToReset: 0.333,
+      chanceToReset: 33.3,
       chanceToHit: effectChance ?? 1,
     };
-  return { name: ConditionName.UNKNOWN } as UnknownEffect;
+  return { name: ConditionName.UNKNOWN, chanceToHit: 0 } as UnknownEffect;
 };
 
 const isParalyze = (effect: string) =>
@@ -60,5 +60,4 @@ const isPoison = (effect: string) => effect.toLowerCase().includes("poison");
 const isBurnt = (effect: string) => effect.toLowerCase().includes("burn");
 const isFrozen = (effect: string) => effect.toLowerCase().includes("freeze");
 const isSlept = (effect: string) => effect.toLowerCase().includes("sleep");
-const isConfused = (effect: string) =>
-  effect.toLowerCase().includes("confusion");
+const isConfused = (effect: string) => effect.toLowerCase().includes("confus");
