@@ -16,7 +16,7 @@ function App() {
   const { data: yourPokemon } = useGetPokemonByNameQuery(you ?? skipToken);
   const { data: enemyPokemon } = useGetPokemonByNameQuery(enemy ?? skipToken);
   const { data: yourPokemonMoveset } = useGetPokemonMovesetByNameQuery(
-    yourPokemon ? { name: yourPokemon.name, moves: ["confuse-ray"] } : skipToken
+    yourPokemon ? { name: yourPokemon.name, moves: ["shadow-ball"] } : skipToken
   );
   const { data: enemyPokemonMoveset } = useGetPokemonMovesetByNameQuery(
     enemyPokemon

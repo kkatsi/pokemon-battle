@@ -76,21 +76,27 @@ const useBattleSequence = ({
     [enemy.name]
   );
 
-  const handleEffectivenessMessage = useCallback((effectiveness: number) => {
-    switch (effectiveness) {
-      case 0.5:
-        setText("It's not very effective...");
-        break;
-      case 2:
-        setText("It's super effective!");
-        break;
-      case 4:
-        setText("It's super effective!");
-        break;
-      default:
-        return;
-    }
-  }, []);
+  const handleEffectivenessMessage = useCallback(
+    (effectiveness: number, name: string) => {
+      switch (effectiveness) {
+        case 0:
+          setText(`It doesn't affect ${name}!`);
+          break;
+        case 0.5:
+          setText("It's not very effective...");
+          break;
+        case 2:
+          setText("It's super effective!");
+          break;
+        case 4:
+          setText("It's super effective!");
+          break;
+        default:
+          return;
+      }
+    },
+    []
+  );
 
   const handleSideEffect = useCallback(
     async (sideEffect: Condition, name: string) => {
@@ -220,7 +226,6 @@ const useBattleSequence = ({
       let canMove = true;
       if (activeSideEffect)
         canMove = await handleActiveSideEffect(activeSideEffect, attacker.name);
-      console.log(attacker.stats.accuracy);
       if (!isSuccessFull(attacker.stats.accuracy)) canMove = false;
       if (!canMove) {
         setIsAttackInProgress(false);
@@ -233,10 +238,12 @@ const useBattleSequence = ({
         attacker,
         defender
       );
+
       if (!animate) setText("But it failed...");
-      else await animateCharacter(animate);
-      if (damage.value) {
-        handleEffectivenessMessage(damage.effectiveness);
+      else if (damage.effectiveness) await animateCharacter(animate);
+
+      if (damage.value || (!damage.value && !damage.effectiveness)) {
+        handleEffectivenessMessage(damage.effectiveness, defender.name);
         await adjustHealth(defender.name, damage.value);
       }
       if (sideEffect?.name !== ConditionName.UNKNOWN && sideEffect !== null)

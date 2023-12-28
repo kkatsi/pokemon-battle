@@ -27,8 +27,8 @@ export type Move = {
 };
 
 export enum ConditionName {
-  PARALYSIS = "PAR",
-  POISON = "POI",
+  PARALYSIS = "PRZ",
+  POISON = "PSN",
   BURN = "BRN",
   FREEZE = "FRZ",
   SLEEP = "SLP",
