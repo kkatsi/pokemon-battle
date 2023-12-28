@@ -37,15 +37,20 @@ export const calculateMoveImpact = (
   defender: Pokemon
 ) => {
   let damage = 0;
-  if (move.accuracy && !isSuccessFull(move.accuracy))
+  const effectiveness = getTypeEffectiveness(move.type, defender.type);
+  console.log(move.type, defender.type);
+  if (
+    move.accuracy &&
+    !isSuccessFull(move.accuracy * (attacker.stats.accuracy / 100))
+  )
     return {
-      damage: { value: damage, effectiveness: 0 },
+      damage: { value: damage, effectiveness },
       sideEffect: null,
       animate: null,
     };
   if (move.damage_type === "status") {
     return {
-      damage: { value: damage, effectiveness: 0 },
+      damage: { value: damage, effectiveness },
       sideEffect: move.short_effect
         ? getConditionEffect(move.short_effect, 100)
         : null,
@@ -55,7 +60,6 @@ export const calculateMoveImpact = (
       },
     };
   }
-  const effectiveness = getTypeEffectiveness(move.type, defender.type);
 
   if (move.damage_type === "physical") {
     damage = calculatePokemonDamage(
@@ -123,8 +127,7 @@ const getTypeEffectiveness = (moveType: string, defenderType: string[]) => {
   const effectiveness = defenderType.map(
     (type) => typeEffectiveness[moveType]?.[type]
   );
-  // .reduce((a, b) => a * b);
-  return effectiveness.reduce((a, b) => a * b); // Default to 1 if not found
+  return effectiveness.reduce((a, b) => a + b); // Default to 1 if not found
 };
 
 const typeEffectiveness: Record<string, Record<string, number>> = {

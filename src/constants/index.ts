@@ -1,4 +1,4 @@
-export const HEALTH_ANIMATION_DURATION = 2600;
+export const HEALTH_ANIMATION_DURATION = 1800;
 export const TEXT_ANIMATION_DURATION = 1500;
 
 export const systemPrompt = (

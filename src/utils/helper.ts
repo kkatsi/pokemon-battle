@@ -9,12 +9,12 @@ export const wait = (ms: number) =>
 export const getFourRandomMoves = (
   moveList: { move: { name: string; url: string } }[]
 ) => {
-  const onlyFifthGenMoves = moveList.filter((move: any) =>
-    move.version_group_details.some(
-      (version: any) => version.version_group.name === "black-white"
-    )
-  );
-  const randomMoves = getRandomItem(onlyFifthGenMoves, 4);
+  // const onlyFifthGenMoves = moveList.filter((move: any) =>
+  //   move.version_group_details.some(
+  //     (version: any) => version.version_group.name === "black-white"
+  //   )
+  // );
+  const randomMoves = getRandomItem(moveList, 4);
   return randomMoves.map((move) => move.move.name as string);
 };
 
@@ -26,6 +26,7 @@ export const capitalizeFirstLetter = (string: string) => {
 };
 
 function getRandomItem(arr: unknown[], n: number) {
+  console.log(arr, n);
   const result = new Array(n);
   let length = arr.length;
   const taken = new Array(length);

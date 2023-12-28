@@ -16,11 +16,11 @@ function App() {
   const { data: yourPokemon } = useGetPokemonByNameQuery(you ?? skipToken);
   const { data: enemyPokemon } = useGetPokemonByNameQuery(enemy ?? skipToken);
   const { data: yourPokemonMoveset } = useGetPokemonMovesetByNameQuery(
-    yourPokemon ? { name: yourPokemon.name, moves: ["shadow-ball"] } : skipToken
+    yourPokemon ? { name: yourPokemon.name, moves: ["fire-blast"] } : skipToken
   );
   const { data: enemyPokemonMoveset } = useGetPokemonMovesetByNameQuery(
     enemyPokemon
-      ? { name: enemyPokemon.name, moves: enemyPokemon.moveNames }
+      ? { name: enemyPokemon.name, moves: ["sludge-bomb"] }
       : skipToken
   );
 
@@ -44,12 +44,14 @@ function App() {
   return (
     <PageLayout>
       <IntroScreen you={yourPokemon} enemy={enemyPokemon} />
-      {showBattleScreen && yourPokemonWithMoves && enemyPokemonWithMoves && (
-        <BattleScreen
-          you={yourPokemonWithMoves}
-          enemy={enemyPokemonWithMoves}
-        />
-      )}
+      {showBattleScreen &&
+        yourPokemonWithMoves.moves &&
+        enemyPokemonWithMoves.moves && (
+          <BattleScreen
+            you={yourPokemonWithMoves}
+            enemy={enemyPokemonWithMoves}
+          />
+        )}
     </PageLayout>
   );
 }
