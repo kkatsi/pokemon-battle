@@ -57,11 +57,32 @@ const useBattleSequence = ({
   const healthAnimationDuration = useSelector(selectHealthAnimationDuration);
 
   const animateCharacter = useCallback(
-    async ({ target, type }: { target: Pokemon; type: string }) => {
+    async (
+      { target, type }: { target: Pokemon; type: string },
+      isPokemonMove?: boolean
+    ) => {
       const element = youElement?.classList.contains(target.name)
         ? youElement
         : enemyElement;
       if (!element) return;
+
+      if (isPokemonMove) {
+        const attacker = !youElement?.classList.contains(target.name)
+          ? youElement
+          : enemyElement;
+        if (!attacker) return;
+        switch (type) {
+          case "damage":
+            attacker.classList.add("physical");
+            await wait(800);
+            attacker.classList.remove("physical");
+            break;
+
+          default:
+            break;
+        }
+      }
+
       element.classList.add(type);
       await wait(1000);
       element.classList.remove(type);
@@ -267,7 +288,7 @@ const useBattleSequence = ({
       if (!animate) {
         setText("But it failed...");
         await wait(TEXT_ANIMATION_DURATION);
-      } else if (damage.effectiveness) await animateCharacter(animate);
+      } else if (damage.effectiveness) await animateCharacter(animate, true);
 
       if (damage.value || (!damage.value && !damage.effectiveness)) {
         handleEffectivenessMessage(damage.effectiveness, defender.name);

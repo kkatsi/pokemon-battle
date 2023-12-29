@@ -37,7 +37,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
 
   return (
     <StyledBattleScreenContainer>
-      <div className={`you ${you.name}`} ref={youRef}>
+      <div className={`you ${you.name}`} id="you" ref={youRef}>
         <img src={you.sprites.battle_back} alt="" />
       </div>
       <HealthBar
@@ -48,7 +48,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
         maxHealth={you.maxHealth}
         sideEffect={yourSideEffect?.name}
       />
-      <div className={`enemy ${enemy.name}`} ref={enemyRef}>
+      <div className={`enemy ${enemy.name}`} id="enemy" ref={enemyRef}>
         <img src={enemy.sprites.battle_front} alt="" />
       </div>
       <HealthBar

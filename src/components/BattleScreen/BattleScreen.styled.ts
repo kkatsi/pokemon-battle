@@ -9,6 +9,34 @@ to{
 }
 `;
 
+const physicalAttackYou = keyframes`
+0%{
+  transform: translateY(0%);
+
+}
+50%{
+  transform: translateY(-10vh);
+}
+
+100%{
+  transform: translateX(40vh) translateY(-20vh) rotate(15deg);
+}
+`;
+
+const physicalAttackEnemy = keyframes`
+0%{
+  transform: translateY(0%);
+
+}
+50%{
+  transform: translateY(-5vh);
+}
+
+100%{
+  transform: translateX(-40vh) translateY(20vh) rotate(-15deg);
+}
+`;
+
 export const StyledBattleScreenContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -33,6 +61,7 @@ export const StyledBattleScreenContainer = styled.div`
   .you,
   .enemy {
     position: absolute;
+    z-index: 999;
     img {
       width: 200%;
       height: auto;
@@ -58,10 +87,24 @@ export const StyledBattleScreenContainer = styled.div`
   .you {
     left: 20%;
     bottom: 20%;
+
+    &.physical {
+      z-index: 9999;
+      img {
+        animation: ${physicalAttackYou} 0.8s ease-in-out;
+      }
+    }
   }
   .enemy {
     right: 32%;
     top: 25%;
+
+    &.physical {
+      z-index: 9999;
+      img {
+        animation: ${physicalAttackEnemy} 0.8s ease-in-out;
+      }
+    }
   }
 
   @media (max-width: 750px) {
