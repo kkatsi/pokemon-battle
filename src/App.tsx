@@ -16,11 +16,13 @@ function App() {
   const { data: yourPokemon } = useGetPokemonByNameQuery(you ?? skipToken);
   const { data: enemyPokemon } = useGetPokemonByNameQuery(enemy ?? skipToken);
   const { data: yourPokemonMoveset } = useGetPokemonMovesetByNameQuery(
-    yourPokemon ? { name: yourPokemon.name, moves: ["fire-blast"] } : skipToken
+    yourPokemon
+      ? { name: yourPokemon.name, moves: yourPokemon.moveNames }
+      : skipToken
   );
   const { data: enemyPokemonMoveset } = useGetPokemonMovesetByNameQuery(
     enemyPokemon
-      ? { name: enemyPokemon.name, moves: ["sludge-bomb"] }
+      ? { name: enemyPokemon.name, moves: enemyPokemon.moveNames }
       : skipToken
   );
 

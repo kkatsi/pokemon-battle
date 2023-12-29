@@ -1,5 +1,6 @@
-export const HEALTH_ANIMATION_DURATION = 1800;
+export const HEALTH_ANIMATION_DURATION = 2000;
 export const TEXT_ANIMATION_DURATION = 1500;
+export const ANIMATION_DURATION_PER_UNIT = 15; //ms
 
 export const systemPrompt = (
   yourPokemonName: string,

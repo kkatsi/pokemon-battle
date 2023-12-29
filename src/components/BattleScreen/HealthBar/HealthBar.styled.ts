@@ -80,7 +80,7 @@ export const StyledHealthBarContainer = styled.div`
         width: 100%;
         height: 100%;
         background-color: #08d10c;
-        transition: width 2.5s ease-in-out;
+        transition: width ease-in-out;
       }
     }
   }

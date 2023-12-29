@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
 import { StyledHealthBarContainer } from "./HealthBar.styled";
 import { animateValue } from "../../../utils/helper";
-import { HEALTH_ANIMATION_DURATION } from "../../../constants";
 import { findColor } from "../../../utils/color";
 import { ConditionName } from "../../../types";
+import { useSelector } from "react-redux";
+import { selectHealthAnimationDuration } from "../../../app/uiSlice";
 
 interface HealthBarProps {
   player: "you" | "enemy";
@@ -24,6 +25,7 @@ const HealthBar: React.FC<HealthBarProps> = ({
 }) => {
   const animatedHealthRef = useRef(null);
   const [previousHealth, setPreviousHealth] = useState<number>();
+  const healthBarAnimationDuration = useSelector(selectHealthAnimationDuration);
 
   useEffect(() => {
     if (animatedHealthRef.current) {
@@ -32,12 +34,12 @@ const HealthBar: React.FC<HealthBarProps> = ({
           animatedHealthRef.current,
           previousHealth,
           health,
-          HEALTH_ANIMATION_DURATION
+          healthBarAnimationDuration
         );
       }
       setPreviousHealth(health);
     }
-  }, [previousHealth, health]);
+  }, [previousHealth, health, healthBarAnimationDuration]);
 
   const calculateEffectBackgroundColor = (sideEffect: string) => {
     let backgroundColor = "black";
@@ -91,7 +93,10 @@ const HealthBar: React.FC<HealthBarProps> = ({
         <div className="health-bar">
           <div
             className="bar"
-            style={{ width: `${(health / maxHealth) * 100}%` }}
+            style={{
+              width: `${(health / maxHealth) * 100}%`,
+              transitionDuration: `${healthBarAnimationDuration / 1000}s`,
+            }}
           />
         </div>
       </div>

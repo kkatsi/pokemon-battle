@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  HEALTH_ANIMATION_DURATION,
-  TEXT_ANIMATION_DURATION,
-} from "../constants";
+  selectHealthAnimationDuration,
+  setHealthAnimationDuration,
+} from "../app/uiSlice";
+import { TEXT_ANIMATION_DURATION } from "../constants";
 import {
   Condition,
   ConditionName,
@@ -12,12 +14,12 @@ import {
 } from "../types";
 import {
   calculateAttacker,
+  calculateHealthAnimationDuration,
   calculateMoveImpact,
   isSuccessFull,
 } from "../utils/battle";
 import { wait } from "../utils/helper";
 import { adjustPokemonStat } from "../utils/stats";
-import { useDispatch } from "react-redux";
 
 const useBattleSequence = ({
   you,
@@ -52,6 +54,7 @@ const useBattleSequence = ({
   const [turn, setTurn] = useState(1);
   const [isBattleEnd, setIsBattleEnd] = useState(false);
   const dispatch = useDispatch();
+  const healthAnimationDuration = useSelector(selectHealthAnimationDuration);
 
   const animateCharacter = useCallback(
     async ({ target, type }: { target: Pokemon; type: string }) => {
@@ -68,6 +71,8 @@ const useBattleSequence = ({
 
   const adjustHealth = useCallback(
     async (playerName: string, damage: number) => {
+      const animationDuration = calculateHealthAnimationDuration(damage);
+      dispatch(setHealthAnimationDuration(animationDuration));
       if (playerName === enemy.name)
         setEnemyHealth((prevValue) => {
           const result = prevValue - damage;
@@ -78,9 +83,9 @@ const useBattleSequence = ({
           const result = prevValue - damage;
           return result < 0 ? 0 : result;
         });
-      await wait(HEALTH_ANIMATION_DURATION);
+      await wait(animationDuration + 500);
     },
-    [enemy.name]
+    [dispatch, enemy.name]
   );
 
   const handleEffectivenessMessage = useCallback(
@@ -259,10 +264,10 @@ const useBattleSequence = ({
         defender
       );
 
-      if (!animate) setText("But it failed...");
-      else if (damage.effectiveness) await animateCharacter(animate);
-
-      console.log(damage);
+      if (!animate) {
+        setText("But it failed...");
+        await wait(TEXT_ANIMATION_DURATION);
+      } else if (damage.effectiveness) await animateCharacter(animate);
 
       if (damage.value || (!damage.value && !damage.effectiveness)) {
         handleEffectivenessMessage(damage.effectiveness, defender.name);
@@ -385,7 +390,7 @@ const useBattleSequence = ({
     (async () => {
       if (yourHealth && enemyHealth) return;
       setIsBattleEnd(true);
-      await wait(HEALTH_ANIMATION_DURATION);
+      await wait(healthAnimationDuration + 500);
       if (yourHealth === 0) {
         youElement?.classList.add("loser");
         setText(`You lost the battle!`);
@@ -394,7 +399,14 @@ const useBattleSequence = ({
         setText(`You won the battle!`);
       }
     })();
-  }, [enemyElement, enemyHealth, handleTurnEnd, youElement, yourHealth]);
+  }, [
+    enemyElement,
+    healthAnimationDuration,
+    enemyHealth,
+    handleTurnEnd,
+    youElement,
+    yourHealth,
+  ]);
 
   return {
     yourHealth,

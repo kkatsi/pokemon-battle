@@ -51,11 +51,12 @@ export const calculateMoveImpact = (
   if (move.damage_type === "status") {
     return {
       damage: { value: damage, effectiveness },
-      sideEffect: move.short_effect
-        ? getConditionEffect(move.short_effect, 100)
-        : null,
+      sideEffect:
+        move.short_effect && !move.target.includes("user")
+          ? getConditionEffect(move.short_effect, 100)
+          : null,
       animate: {
-        target: move.target === "user" ? attacker : defender,
+        target: move.target.includes("user") ? attacker : defender,
         type: "status",
       },
     };
@@ -120,14 +121,25 @@ export const calculateMaxStat = (
   return Math.floor(maxStat);
 };
 
+export const calculateHealthAnimationDuration = (healthChange: number) => {
+  const baseDuration = 1000; // Set a base duration in milliseconds
+  const logarithmicFactor = 100; // Set the logarithmic factor
+
+  // Calculate the animation duration using a logarithmic function
+  const animationDuration =
+    baseDuration + logarithmicFactor * Math.log(healthChange + 1);
+
+  return animationDuration;
+};
+
 export const getARandomChanceBetweenOneAndOneHundred = () =>
   Math.floor(Math.random() * (100 - 1 + 1)) + 1;
 
 const getTypeEffectiveness = (moveType: string, defenderType: string[]) => {
-  const effectiveness = defenderType.map(
-    (type) => typeEffectiveness[moveType]?.[type]
-  );
-  return effectiveness.reduce((a, b) => a + b); // Default to 1 if not found
+  const effectiveness = defenderType
+    .map((type) => typeEffectiveness[moveType]?.[type])
+    .filter((item) => item !== 0);
+  return effectiveness.reduce((a, b) => a * b); // Default to 1 if not found
 };
 
 const typeEffectiveness: Record<string, Record<string, number>> = {
