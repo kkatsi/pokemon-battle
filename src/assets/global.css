@@ -32,7 +32,8 @@ html {
   height: 120px;
   border-radius: 50%;
   transform: scale(0); /* Initially hide the energy */
-  animation: chargeAnimation 1.5s linear forwards;
+  animation: chargeAnimation 2s linear forwards,
+    move 0.5s ease-in-out 2s forwards;
   box-shadow: 0 0 12px 12px var(--animation-color) inset,
     0 0 12px 12px var(--animation-color);
 
@@ -41,6 +42,15 @@ html {
     rgba(255, 113, 12, 0) 45%,
     var(--animation-color) 51.5%
   );
+}
+
+@keyframes move {
+  from {
+    transform: translateX(0vw) translateY(0px);
+  }
+  to {
+    transform: translateX(35vh) translateY(-100px);
+  }
 }
 
 @keyframes chargeAnimation {

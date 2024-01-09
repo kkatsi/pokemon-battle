@@ -10,20 +10,12 @@ export const executeSpecialAttackAnimation = async (
   const r = document.querySelector(":root") as HTMLElement;
   r.style.setProperty("--animation-color", animationColor);
 
-  const beam = document.createElement("div");
-  beam.classList.add("beam");
   const energyBall = document.createElement("div");
   energyBall.classList.add("energyBall");
 
   container.appendChild(energyBall);
 
-  await wait(1500);
+  await wait(2500);
 
   container.removeChild(energyBall);
-
-  container.appendChild(beam);
-
-  await wait(1000);
-
-  container.removeChild(beam);
 };
