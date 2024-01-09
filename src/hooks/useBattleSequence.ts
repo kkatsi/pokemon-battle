@@ -20,6 +20,7 @@ import {
 } from "../utils/battle";
 import { wait } from "../utils/helper";
 import { adjustPokemonStat } from "../utils/stats";
+import { executeSpecialAttackAnimation } from "../utils/animation";
 
 const useBattleSequence = ({
   you,
@@ -59,7 +60,9 @@ const useBattleSequence = ({
   const animateCharacter = useCallback(
     async (
       { target, type }: { target: Pokemon; type: string },
-      isPokemonMove?: boolean
+      isPokemonMove?: boolean,
+      damageType?: string,
+      moveType?: string
     ) => {
       const element = youElement?.classList.contains(target.name)
         ? youElement
@@ -71,13 +74,20 @@ const useBattleSequence = ({
           ? youElement
           : enemyElement;
         if (!attacker) return;
-        switch (type) {
-          case "damage":
+
+        switch (damageType) {
+          case "physical":
             attacker.classList.add("physical");
             await wait(800);
             attacker.classList.remove("physical");
             break;
-
+          case "special":
+            await executeSpecialAttackAnimation(
+              youElement?.classList.contains(target.name) ? "you" : "enemy",
+              moveType ?? "normal",
+              attacker
+            );
+            break;
           default:
             break;
         }
@@ -288,7 +298,8 @@ const useBattleSequence = ({
       if (!animate) {
         setText("But it failed...");
         await wait(TEXT_ANIMATION_DURATION);
-      } else if (damage.effectiveness) await animateCharacter(animate, true);
+      } else if (damage.effectiveness)
+        await animateCharacter(animate, true, damage.type, move.type);
 
       if (damage.value || (!damage.value && !damage.effectiveness)) {
         handleEffectivenessMessage(damage.effectiveness, defender.name);

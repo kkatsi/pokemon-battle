@@ -36,7 +36,8 @@ export const calculateMoveImpact = (
   attacker: Pokemon,
   defender: Pokemon
 ) => {
-  let damage = 0;
+  let damage = 0,
+    damageType;
   const effectiveness = getTypeEffectiveness(move.type, defender.type);
   console.log(move.type, defender.type);
   if (
@@ -69,6 +70,7 @@ export const calculateMoveImpact = (
       move.power,
       effectiveness
     );
+    damageType = "physical";
   }
   if (move.damage_type === "special") {
     damage = calculatePokemonDamage(
@@ -77,9 +79,10 @@ export const calculateMoveImpact = (
       move.power,
       effectiveness
     );
+    damageType = "special";
   }
   return {
-    damage: { value: damage, effectiveness },
+    damage: { value: damage, type: damageType, effectiveness },
     sideEffect:
       move.short_effect && move.effect_chance
         ? getConditionEffect(move.short_effect, move.effect_chance)

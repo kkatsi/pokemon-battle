@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Alfa+Slab+One&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
+:root {
+  --animation-color: yellow;
+}
+
 body,
 html {
   margin: 0;
@@ -18,4 +22,179 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.energyBall {
+  position: absolute;
+  left: 50px;
+  top: 50px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  transform: scale(0); /* Initially hide the energy */
+  animation: chargeAnimation 1.5s linear forwards;
+  box-shadow: 0 0 12px 12px var(--animation-color) inset,
+    0 0 12px 12px var(--animation-color);
+
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 113, 12, 0) 45%,
+    var(--animation-color) 51.5%
+  );
+}
+
+@keyframes chargeAnimation {
+  0% {
+    transform: translate(0, 0) rotate(0) scale(0);
+  }
+  2% {
+    transform: translate(-7px, 10px) rotate(3.5deg) scale(0.02);
+  }
+  4% {
+    transform: translate(-5px, 7px) rotate(-1.5deg) scale(0.04);
+  }
+  6% {
+    transform: translate(0px, 7px) rotate(3.5deg) scale(0.06);
+  }
+  8% {
+    transform: translate(0px, -9px) rotate(-0.5deg) scale(0.08);
+  }
+  10% {
+    transform: translate(-8px, -5px) rotate(2.5deg) scale(0.1);
+  }
+  12% {
+    transform: translate(-1px, 4px) rotate(3.5deg) scale(0.12);
+  }
+  14% {
+    transform: translate(8px, 4px) rotate(0.5deg) scale(0.14);
+  }
+  16% {
+    transform: translate(-3px, 8px) rotate(0.5deg) scale(0.16);
+  }
+  18% {
+    transform: translate(10px, 10px) rotate(-0.5deg) scale(0.18);
+  }
+  20% {
+    transform: translate(-4px, 10px) rotate(0.5deg) scale(0.2);
+  }
+  22% {
+    transform: translate(6px, 4px) rotate(0.5deg) scale(0.22);
+  }
+  24% {
+    transform: translate(-9px, -7px) rotate(-0.5deg) scale(0.24);
+  }
+  26% {
+    transform: translate(8px, 3px) rotate(-1.5deg) scale(0.26);
+  }
+  28% {
+    transform: translate(-8px, -9px) rotate(2.5deg) scale(0.28);
+  }
+  30% {
+    transform: translate(0px, -3px) rotate(-0.5deg) scale(0.3);
+  }
+  32% {
+    transform: translate(-3px, 3px) rotate(1.5deg) scale(0.32);
+  }
+  34% {
+    transform: translate(8px, 0px) rotate(-1.5deg) scale(0.34);
+  }
+  36% {
+    transform: translate(-3px, -5px) rotate(-2.5deg) scale(0.36);
+  }
+  38% {
+    transform: translate(-3px, 6px) rotate(-0.5deg) scale(0.38);
+  }
+  40% {
+    transform: translate(3px, -6px) rotate(1.5deg) scale(0.4);
+  }
+  42% {
+    transform: translate(-6px, -4px) rotate(-1.5deg) scale(0.42);
+  }
+  44% {
+    transform: translate(-2px, -7px) rotate(-0.5deg) scale(0.44);
+  }
+  46% {
+    transform: translate(9px, 2px) rotate(-0.5deg) scale(0.46);
+  }
+  48% {
+    transform: translate(6px, 4px) rotate(3.5deg) scale(0.48);
+  }
+  50% {
+    transform: translate(7px, 3px) rotate(0.5deg) scale(0.5);
+  }
+  52% {
+    transform: translate(6px, 6px) rotate(0.5deg) scale(0.52);
+  }
+  54% {
+    transform: translate(-4px, -5px) rotate(2.5deg) scale(0.54);
+  }
+  56% {
+    transform: translate(-8px, 0px) rotate(2.5deg) scale(0.56);
+  }
+  58% {
+    transform: translate(-4px, 2px) rotate(-1.5deg) scale(0.58);
+  }
+  60% {
+    transform: translate(-6px, 4px) rotate(-0.5deg) scale(0.6);
+  }
+  62% {
+    transform: translate(6px, 8px) rotate(0.5deg) scale(0.62);
+  }
+  64% {
+    transform: translate(0px, 8px) rotate(-2.5deg) scale(0.64);
+  }
+  66% {
+    transform: translate(6px, 8px) rotate(0.5deg) scale(0.66);
+  }
+  68% {
+    transform: translate(-6px, 0px) rotate(1.5deg) scale(0.68);
+  }
+  70% {
+    transform: translate(1px, -5px) rotate(-0.5deg) scale(0.7);
+  }
+  72% {
+    transform: translate(7px, -5px) rotate(1.5deg) scale(0.72);
+  }
+  74% {
+    transform: translate(-3px, -7px) rotate(1.5deg) scale(0.74);
+  }
+  76% {
+    transform: translate(-4px, -7px) rotate(2.5deg) scale(0.76);
+  }
+  78% {
+    transform: translate(-5px, 4px) rotate(3.5deg) scale(0.78);
+  }
+  80% {
+    transform: translate(2px, 7px) rotate(-0.5deg) scale(0.8);
+  }
+  82% {
+    transform: translate(-6px, 10px) rotate(1.5deg) scale(0.82);
+  }
+  84% {
+    transform: translate(-8px, -8px) rotate(1.5deg) scale(0.84);
+  }
+  86% {
+    transform: translate(-6px, 4px) rotate(-0.5deg) scale(0.86);
+  }
+  88% {
+    transform: translate(-9px, -7px) rotate(3.5deg) scale(0.88);
+  }
+  90% {
+    transform: translate(7px, 8px) rotate(-0.5deg) scale(0.9);
+  }
+  92% {
+    transform: translate(-2px, -6px) rotate(-0.5deg) scale(0.92);
+  }
+  94% {
+    transform: translate(-2px, 8px) rotate(2.5deg) scale(0.94);
+  }
+  96% {
+    transform: translate(-5px, 6px) rotate(-1.5deg) scale(0.96);
+  }
+  98% {
+    transform: translate(6px, -5px) rotate(2.5deg) scale(0.98);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0) scale(1);
+  }
 }
