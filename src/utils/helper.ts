@@ -1,3 +1,5 @@
+import { totalAllowedMoveNames } from "./moves";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const wait = (ms: number) =>
   new Promise<void>((res) => {
@@ -7,14 +9,27 @@ export const wait = (ms: number) =>
   });
 
 export const getFourRandomMoves = (
-  moveList: { move: { name: string; url: string } }[]
+  moveList: { move: { name: string; url: string } }[],
+  movesFound?: number
 ) => {
   // const onlyFifthGenMoves = moveList.filter((move: any) =>
   //   move.version_group_details.some(
   //     (version: any) => version.version_group.name === "black-white"
   //   )
   // );
-  const randomMoves = getRandomItem(moveList, 4);
+  const randomMoves = getRandomItems(
+    moveList,
+    4 - (movesFound || 0)
+  ) as typeof moveList;
+
+  const randomMovesWithoutStatusTypeExceptAilment = randomMoves.filter((move) =>
+    totalAllowedMoveNames.includes(move.move.name)
+  );
+  if (randomMovesWithoutStatusTypeExceptAilment.length < 4)
+    getFourRandomMoves(
+      moveList,
+      randomMovesWithoutStatusTypeExceptAilment.length
+    );
   return randomMoves.map((move) => move.move.name as string);
 };
 
@@ -25,7 +40,7 @@ export const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-function getRandomItem(arr: unknown[], n: number) {
+function getRandomItems(arr: unknown[], n: number) {
   console.log(arr, n);
   const result = new Array(n);
   let length = arr.length;

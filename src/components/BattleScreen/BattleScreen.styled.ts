@@ -37,31 +37,6 @@ const physicalAttackEnemy = keyframes`
 }
 `;
 
-const chargeAnimation = keyframes`
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-`;
-
-/* Keyframes for beam animation */
-const beamAnimation = keyframes`
-  0% {
-    transform: scaleY(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scaleY(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleY(1);
-    opacity: 0;
-  }
-`;
-
 export const StyledBattleScreenContainer = styled.div`
   width: 100%;
   height: 100%;
