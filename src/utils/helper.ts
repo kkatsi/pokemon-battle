@@ -9,28 +9,27 @@ export const wait = (ms: number) =>
   });
 
 export const getFourRandomMoves = (
-  moveList: { move: { name: string; url: string } }[],
-  movesFound?: number
+  moveList: { move: { name: string; url: string } }[]
 ) => {
-  // const onlyFifthGenMoves = moveList.filter((move: any) =>
-  //   move.version_group_details.some(
-  //     (version: any) => version.version_group.name === "black-white"
-  //   )
-  // );
-  const randomMoves = getRandomItems(
-    moveList,
-    4 - (movesFound || 0)
-  ) as typeof moveList;
-
-  const randomMovesWithoutStatusTypeExceptAilment = randomMoves.filter((move) =>
-    totalAllowedMoveNames.includes(move.move.name)
-  );
-  if (randomMovesWithoutStatusTypeExceptAilment.length < 4)
-    getFourRandomMoves(
+  const getAllowedRandomMoves = (movesFound?: number) => {
+    const randomMoves = getRandomItems(
       moveList,
-      randomMovesWithoutStatusTypeExceptAilment.length
+      4 - (movesFound || 0)
+    ) as typeof moveList;
+
+    const randomMovesWithoutStatusTypeExceptAilment = randomMoves.filter(
+      (move) => totalAllowedMoveNames.includes(move.move.name)
     );
-  return randomMoves.map((move) => move.move.name as string);
+    return randomMovesWithoutStatusTypeExceptAilment;
+  };
+
+  let finalMoves: { move: { name: string; url: string } }[] = [];
+
+  while (finalMoves.length < 4) {
+    finalMoves = getAllowedRandomMoves(finalMoves.length);
+  }
+
+  return finalMoves.map((move) => move.move.name as string);
 };
 
 export const replaceDashesWithSpaces = (string: string) =>
@@ -41,7 +40,6 @@ export const capitalizeFirstLetter = (string: string) => {
 };
 
 function getRandomItems(arr: unknown[], n: number) {
-  console.log(arr, n);
   const result = new Array(n);
   let length = arr.length;
   const taken = new Array(length);
@@ -71,4 +69,47 @@ export function animateValue(
     }
   };
   window.requestAnimationFrame(step);
+}
+
+export function weightedRandomIndex(weights: number[]): number {
+  const totalWeight = weights.reduce((acc, val) => acc + val, 0);
+  const randomValue = Math.random() * totalWeight;
+  let weightSum = 0;
+  for (let i = 0; i < weights.length; i++) {
+    weightSum += weights[i];
+    if (randomValue <= weightSum) {
+      return i;
+    }
+  }
+  return weights.length - 1; // This should never happen
+}
+
+export function extractPercentageFromString(str: string) {
+  // Regular expression to match percentage patterns
+  const regex = /(\d+|half)\/(\d+)/;
+
+  // Match the percentage pattern in the string
+  const match = str.match(regex);
+
+  if (match && match.length === 3) {
+    let numerator: string | number = match[1];
+    if (numerator === "half") {
+      numerator = 1; // Treat "half" as 1 in the calculation
+    } else {
+      numerator = parseInt(numerator);
+    }
+
+    // Denominator should be 2 if "half" is used
+    const denominator =
+      typeof numerator === "string" && numerator === "half"
+        ? 2
+        : parseInt(match[2]);
+
+    // Calculate the percentage
+    const percentage = (numerator / denominator) * 100;
+    return percentage;
+  } else {
+    // No percentage pattern found
+    return null;
+  }
 }

@@ -17,7 +17,7 @@ export type Move = {
   name: string;
   accuracy: number;
   effect_chance: number;
-  short_effect: string;
+  effect?: string;
   power: number;
   pp: number;
   type: string;

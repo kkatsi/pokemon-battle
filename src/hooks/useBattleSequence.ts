@@ -4,7 +4,10 @@ import {
   selectHealthAnimationDuration,
   setHealthAnimationDuration,
 } from "../app/uiSlice";
-import { TEXT_ANIMATION_DURATION } from "../constants";
+import {
+  CHANCE_TO_ATTACK_IN_CONFUSION,
+  TEXT_ANIMATION_DURATION,
+} from "../constants";
 import {
   Condition,
   ConditionName,
@@ -12,6 +15,7 @@ import {
   Pokemon,
   UnknownEffect,
 } from "../types";
+import { executeSpecialAttackAnimation } from "../utils/animation";
 import {
   calculateAttacker,
   calculateHealthAnimationDuration,
@@ -20,7 +24,7 @@ import {
 } from "../utils/battle";
 import { wait } from "../utils/helper";
 import { adjustPokemonStat } from "../utils/stats";
-import { executeSpecialAttackAnimation } from "../utils/animation";
+import { minmaxMoveDecision } from "../utils/moves";
 
 const useBattleSequence = ({
   you,
@@ -34,8 +38,8 @@ const useBattleSequence = ({
 }: {
   you: Pokemon;
   enemy: Pokemon;
-  enemyMove: Move | null;
-  setEnemyMove: (move: Move | null) => void;
+  enemyMove?: Move;
+  setEnemyMove: (move: Move | undefined) => void;
   yourMove: Move | null;
   setYourMove: (move: Move | null) => void;
   youElement?: HTMLElement | null;
@@ -207,14 +211,19 @@ const useBattleSequence = ({
           setText(`${name} is confused!`);
           await wait(TEXT_ANIMATION_DURATION);
           if (!isSuccessFull(activeSideEffect.chanceToReset)) {
-            setText(`It hurt itself in it's confusion!`);
-            await wait(TEXT_ANIMATION_DURATION);
-            await animateCharacter({
-              target: you.name === name ? you : enemy,
-              type: "damage",
-            });
-            await adjustHealth(name, 100 / 2 + 1);
-            canMove = false;
+            if (!isSuccessFull(CHANCE_TO_ATTACK_IN_CONFUSION)) {
+              setText(`It hurt itself in it's confusion!`);
+              await wait(TEXT_ANIMATION_DURATION);
+              await animateCharacter({
+                target: you.name === name ? you : enemy,
+                type: "damage",
+              });
+              await adjustHealth(name, 100 / 2 + 1);
+              canMove = false;
+            } else {
+              await wait(TEXT_ANIMATION_DURATION);
+              canMove = true;
+            }
           } else {
             setText(`${name} snapped out of confusion!`);
             name === you.name
@@ -311,6 +320,11 @@ const useBattleSequence = ({
         damage.effectiveness
       )
         await handleSideEffect(sideEffect, defender.name);
+      if (damage.recoilDamage) {
+        setText(`${attacker.name} was hurt by the recoil!`);
+        await wait(TEXT_ANIMATION_DURATION);
+        await adjustHealth(attacker.name, damage.recoilDamage);
+      }
       setIsAttackInProgress(false);
     },
     [
@@ -324,11 +338,11 @@ const useBattleSequence = ({
 
   const handleTurnEnd = useCallback(() => {
     setTurn((prevTurn) => prevTurn + 1);
-    setEnemyMove(enemy.moves![0]);
+    setEnemyMove(minmaxMoveDecision(enemy.moves ?? [], enemy, you));
     setYourMove(null);
     setIsTurnInProgress(false);
     setIsAttackPhaseEnded(false);
-  }, [enemy.moves, setEnemyMove, setYourMove]);
+  }, [enemy, setEnemyMove, setYourMove, you]);
 
   useEffect(() => {
     if (!isBattleEnd) setText(`What will ${you.name} do?`);

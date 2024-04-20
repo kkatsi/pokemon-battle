@@ -7,7 +7,40 @@ import {
   Condition,
   ConditionName,
   UnknownEffect,
+  Move,
+  Pokemon,
 } from "../types";
+import { calculateMoveImpact } from "./battle";
+import { weightedRandomIndex } from "./helper";
+
+export function minmaxMoveDecision(
+  pokemonMoves: Move[],
+  attacker: Pokemon,
+  defender: Pokemon
+) {
+  const moveProbabilities: { [key: string]: number } = {};
+  let totalEffectiveness = 0;
+
+  totalEffectiveness = pokemonMoves.reduce(
+    (acc, move) =>
+      acc + calculateMoveImpact(move, attacker, defender).damage.value,
+    0
+  );
+
+  pokemonMoves.forEach((move) => {
+    moveProbabilities[move.name] =
+      calculateMoveImpact(move, attacker, defender).damage.value /
+      totalEffectiveness;
+  });
+
+  const moves = Object.keys(moveProbabilities);
+  const weights = Object.values(moveProbabilities);
+
+  const chosenMoveIndex = weightedRandomIndex(weights);
+  const chosenMoveName = moves[chosenMoveIndex];
+
+  return attacker.moves?.find((move) => move.name === chosenMoveName);
+}
 
 export const getConditionEffect = (
   effectString: string,
@@ -229,7 +262,6 @@ const generallyAllowedMoveNames = [
   "strength",
   "absorb",
   "mega-drain",
-  "leech-seed",
   "solar-beam",
   "poison-powder",
   "stun-spore",
@@ -269,7 +301,6 @@ const generallyAllowedMoveNames = [
   "kinesis",
   "high-jump-kick",
   "glare",
-  "dream-eater",
   "barrage",
   "leech-life",
   "lovely-kiss",
@@ -277,7 +308,6 @@ const generallyAllowedMoveNames = [
   "transform",
   "dizzy-punch",
   "spore",
-  "flash",
   "psywave",
   "crabhammer",
   "fury-swipes",
@@ -293,7 +323,6 @@ const generallyAllowedMoveNames = [
   "mind-reader",
   "nightmare",
   "flame-wheel",
-  "snore",
   "flail",
   "conversion-2",
   "aeroblast",
@@ -341,7 +370,6 @@ const generallyAllowedMoveNames = [
   "extreme-speed",
   "ancient-power",
   "shadow-ball",
-  "future-sight",
   "rock-smash",
   "whirlpool",
   "beat-up",
@@ -853,3 +881,5 @@ const isBurnt = (effect: string) => effect.toLowerCase().includes("burn");
 const isFrozen = (effect: string) => effect.toLowerCase().includes("freeze");
 const isSlept = (effect: string) => effect.toLowerCase().includes("sleep");
 const isConfused = (effect: string) => effect.toLowerCase().includes("confus");
+export const hasRecoil = (effect: string) =>
+  effect.toLowerCase().includes("recoil");

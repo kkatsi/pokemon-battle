@@ -1,5 +1,6 @@
 import { Condition, Move, Pokemon } from "../types";
-import { getConditionEffect } from "./moves";
+import { extractPercentageFromString } from "./helper";
+import { getConditionEffect, hasRecoil } from "./moves";
 
 export const calculateAttacker = (
   you: Pokemon,
@@ -28,8 +29,8 @@ export const calculateAttacker = (
       };
 };
 
-export const isSuccessFull = (accuracy: number) =>
-  getARandomChanceBetweenOneAndOneHundred() <= accuracy;
+export const isSuccessFull = (numberBetweenOneAndOneHundred: number) =>
+  getARandomChanceBetweenOneAndOneHundred() <= numberBetweenOneAndOneHundred;
 
 export const calculateMoveImpact = (
   move: Move,
@@ -37,9 +38,9 @@ export const calculateMoveImpact = (
   defender: Pokemon
 ) => {
   let damage = 0,
-    damageType;
+    damageType,
+    recoilDamage = 0;
   const effectiveness = getTypeEffectiveness(move.type, defender.type);
-  console.log(move.type, defender.type);
   if (
     move.accuracy &&
     !isSuccessFull(move.accuracy * (attacker.stats.accuracy / 100))
@@ -53,8 +54,8 @@ export const calculateMoveImpact = (
     return {
       damage: { value: damage, effectiveness },
       sideEffect:
-        move.short_effect && !move.target.includes("user")
-          ? getConditionEffect(move.short_effect, 100)
+        move.effect && !move.target.includes("user")
+          ? getConditionEffect(move.effect, 100)
           : null,
       animate: {
         target: move.target.includes("user") ? attacker : defender,
@@ -81,11 +82,19 @@ export const calculateMoveImpact = (
     );
     damageType = "special";
   }
+
+  if (move.effect && hasRecoil(move.effect)) {
+    const recoilPercentage = extractPercentageFromString(move.effect);
+    recoilDamage = recoilPercentage
+      ? calculateRecoilDamage(recoilPercentage, move.power)
+      : 0;
+  }
+
   return {
-    damage: { value: damage, type: damageType, effectiveness },
+    damage: { value: damage, type: damageType, effectiveness, recoilDamage },
     sideEffect:
-      move.short_effect && move.effect_chance
-        ? getConditionEffect(move.short_effect, move.effect_chance)
+      move.effect && move.effect_chance
+        ? getConditionEffect(move.effect, move.effect_chance)
         : null,
     animate: { target: defender, type: "damage" },
   };
@@ -111,6 +120,11 @@ export const calculatePokemonDamage = (
 
   return totalDamage;
 };
+
+export const calculateRecoilDamage = (
+  recoilPercentage: number,
+  power: number
+) => (recoilPercentage / 100) * power;
 
 export const calculateMaxStat = (
   baseStat: number,
@@ -138,7 +152,10 @@ export const calculateHealthAnimationDuration = (healthChange: number) => {
 export const getARandomChanceBetweenOneAndOneHundred = () =>
   Math.floor(Math.random() * (100 - 1 + 1)) + 1;
 
-const getTypeEffectiveness = (moveType: string, defenderType: string[]) => {
+export const getTypeEffectiveness = (
+  moveType: string,
+  defenderType: string[]
+) => {
   const effectiveness = defenderType
     .map((type) => typeEffectiveness[moveType]?.[type])
     .filter((item) => item !== 0);

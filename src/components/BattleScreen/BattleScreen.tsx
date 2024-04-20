@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import useBattleSequence from "../../hooks/useBattleSequence";
 import { Move, Pokemon } from "../../types";
+import { minmaxMoveDecision } from "../../utils/moves";
 import { StyledBattleScreenContainer } from "./BattleScreen.styled";
 import Footer from "./Footer";
 import HealthBar from "./HealthBar";
@@ -11,9 +12,10 @@ interface BattleScreenProps {
 }
 
 export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
-  //  const enemyMove = useOpenAIResponse(1, you, enemy);
+  const [enemyMove, setEnemyMove] = useState(
+    minmaxMoveDecision(enemy.moves ?? [], enemy, you)
+  );
   const [yourMove, setYourMove] = useState<Move | null>(null);
-  const [enemyMove, setEnemyMove] = useState<Move | null>(enemy.moves![0]);
   const youRef = useRef<HTMLDivElement>(null);
   const enemyRef = useRef<HTMLDivElement>(null);
   const {
@@ -27,10 +29,10 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
   } = useBattleSequence({
     you,
     enemy,
+    setEnemyMove,
     yourMove,
     setYourMove,
     enemyMove,
-    setEnemyMove,
     youElement: youRef.current,
     enemyElement: enemyRef.current,
   });
