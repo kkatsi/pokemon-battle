@@ -4,10 +4,9 @@ import {
   useGetPokemonByNameQuery,
   useGetPokemonMovesetByNameQuery,
 } from "./app/api";
-import { BattleScreen } from "./components/BattleScreen/BattleScreen";
-import { IntroScreen } from "./components/IntroScreen/IntroScreen";
+import BattleBuilder from "./components/BattleBuilder";
+import BattleDialog from "./components/BattleDialog";
 import useGetSelectedPokemons from "./hooks/useGetSelectedPokemons";
-import { PageLayout } from "./layouts/PageLayout.styled";
 import { Pokemon } from "./types";
 import { wait } from "./utils/helper";
 
@@ -36,25 +35,24 @@ function App() {
   } as Pokemon;
   const [showBattleScreen, setShowBattleScreen] = useState(false);
 
+  const [hasOngoingBattle, setHasOngoingBattle] = useState(false);
+
   useEffect(() => {
-    (async () => {
+    const waitForIntroScreenAnimation = async () => {
       await wait(4000);
       setShowBattleScreen(true);
-    })();
-  }, []);
+    };
+
+    if (hasOngoingBattle) {
+      waitForIntroScreenAnimation();
+    }
+  }, [hasOngoingBattle]);
 
   return (
-    <PageLayout>
-      <IntroScreen you={yourPokemon} enemy={enemyPokemon} />
-      {showBattleScreen &&
-        yourPokemonWithMoves.moves &&
-        enemyPokemonWithMoves.moves && (
-          <BattleScreen
-            you={yourPokemonWithMoves}
-            enemy={enemyPokemonWithMoves}
-          />
-        )}
-    </PageLayout>
+    <>
+      <BattleBuilder onBattleStart={() => setHasOngoingBattle(true)} />
+      <BattleDialog isOpen={hasOngoingBattle} />
+    </>
   );
 }
 

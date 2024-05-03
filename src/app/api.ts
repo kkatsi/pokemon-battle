@@ -19,6 +19,7 @@ export const pokemonApi = createApi({
         name: capitalizeFirstLetter(pokemon.name),
         originalName: pokemon.name,
         sprites: {
+          showcase: pokemon.sprites.front_default,
           default: pokemon.sprites.other["official-artwork"].front_default,
           battle_back:
             pokemon.sprites.versions["generation-v"]["black-white"].animated
