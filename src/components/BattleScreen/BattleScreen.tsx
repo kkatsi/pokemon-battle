@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useBattleSequence from "../../hooks/useBattleSequence";
 import { Move, Pokemon } from "../../types";
 import { minmaxMoveDecision } from "../../utils/moves";
@@ -7,11 +7,16 @@ import Footer from "./Footer";
 import HealthBar from "./HealthBar";
 
 interface BattleScreenProps {
+  onBattleEnd: () => void;
   you: Pokemon;
   enemy: Pokemon;
 }
 
-export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
+export const BattleScreen: React.FC<BattleScreenProps> = ({
+  onBattleEnd,
+  you,
+  enemy,
+}) => {
   const [enemyMove, setEnemyMove] = useState(
     minmaxMoveDecision(enemy.moves ?? [], enemy, you)
   );
@@ -26,6 +31,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
     text,
     isTurnInProgress,
     isBattleEnd,
+    closeModal,
   } = useBattleSequence({
     you,
     enemy,
@@ -36,6 +42,10 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({ you, enemy }) => {
     youElement: youRef.current,
     enemyElement: enemyRef.current,
   });
+
+  useEffect(() => {
+    if (closeModal) onBattleEnd();
+  }, [closeModal, onBattleEnd]);
 
   return (
     <StyledBattleScreenContainer>

@@ -8,8 +8,13 @@ function App() {
 
   return (
     <>
-      <BattleBuilder onBattleStart={() => setHasOngoingBattle(true)} />
-      {hasOngoingBattle && <BattleDialog />}
+      <BattleBuilder
+        key={hasOngoingBattle.toString()}
+        onBattleStart={() => setHasOngoingBattle(true)}
+      />
+      {hasOngoingBattle && (
+        <BattleDialog onBattleEnd={() => setHasOngoingBattle(false)} />
+      )}
     </>
   );
 }

@@ -35,8 +35,9 @@ const BattleBuilder: React.FC<BattleBuilderProps> = ({ onBattleStart }) => {
       <button
         disabled={!userSelectedPokemonName || !enemySelectedPokemonName}
         onClick={() => {
-          if (userSelectedPokemonName && enemySelectedPokemonName)
+          if (userSelectedPokemonName && enemySelectedPokemonName) {
             onBattleStart(userSelectedPokemonName, enemySelectedPokemonName);
+          }
         }}
         className="battle-button"
       >

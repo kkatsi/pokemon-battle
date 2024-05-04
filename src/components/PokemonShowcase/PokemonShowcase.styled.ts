@@ -16,11 +16,11 @@ export const StyledPokemonShowcaseContainer = styled.div`
   }
 
   img {
-    width: 50%;
+    width: 100%;
+    max-width: 130px;
     height: auto;
   }
 
-  /* HTML: <div class="loader"></div> */
   .loader {
     margin-top: 10px;
     width: 20px;

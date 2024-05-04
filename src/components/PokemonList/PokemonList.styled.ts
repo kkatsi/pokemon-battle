@@ -37,8 +37,22 @@ export const StyledPokemonListContainer = styled.div`
       max-width: calc(100% - 2px);
       border-radius: 8px;
 
+      &.active {
+        &.you {
+          button {
+            background: #0075be;
+          }
+        }
+        &.enemy {
+          button {
+            background: #ff00ff;
+          }
+        }
+      }
+
       button {
         text-transform: capitalize;
+        border-radius: 8px;
         color: white;
         font-size: 16px;
         font-family: "Raleway", sans-serif;

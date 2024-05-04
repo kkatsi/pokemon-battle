@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import useGetPokemoNamesInfiniteQuery from "../../hooks/useGetPokemoNamesInfiniteQuery";
 import { StyledPokemonListContainer } from "./PokemonList.styled";
 import { updateQueryStringParam } from "../../utils/helper";
@@ -13,6 +13,7 @@ const PokemonList: React.FC<PokemonListProps> = ({
   onPokemonSelection,
 }) => {
   const { pokemonNames, fetchMore } = useGetPokemoNamesInfiniteQuery();
+  const [selectedPokemonName, setSelectedPokemonName] = useState("");
 
   const observer = useRef<IntersectionObserver>();
 
@@ -28,6 +29,7 @@ const PokemonList: React.FC<PokemonListProps> = ({
 
   const handlePokemonSelection = async (pokemonName: string) => {
     onPokemonSelection(pokemonName);
+    setSelectedPokemonName(pokemonName);
     updateQueryStringParam(player, pokemonName);
   };
 
@@ -36,6 +38,9 @@ const PokemonList: React.FC<PokemonListProps> = ({
       <ul>
         {pokemonNames?.results.map((pokemonEntry, index) => (
           <li
+            className={`${
+              pokemonEntry.name === selectedPokemonName ? "active" : ""
+            } ${player}`}
             key={`${player}-${pokemonEntry.name}`}
             ref={
               index === pokemonNames.results.length - 10

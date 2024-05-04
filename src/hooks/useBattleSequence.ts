@@ -58,6 +58,7 @@ const useBattleSequence = ({
   );
   const [turn, setTurn] = useState(1);
   const [isBattleEnd, setIsBattleEnd] = useState(false);
+  const [closeModal, setCloseModal] = useState(false);
   const dispatch = useDispatch();
   const healthAnimationDuration = useSelector(selectHealthAnimationDuration);
 
@@ -442,6 +443,8 @@ const useBattleSequence = ({
         enemyElement?.classList.add("loser");
         setText(`You won the battle!`);
       }
+      await wait(3000);
+      setCloseModal(true);
     })();
   }, [
     enemyElement,
@@ -460,6 +463,7 @@ const useBattleSequence = ({
     text,
     isTurnInProgress,
     isBattleEnd,
+    closeModal,
   };
 };
 
