@@ -1,3 +1,10 @@
+export type PaginatedPokemonNamesResult = {
+  count: number;
+  next: string;
+  previous: string;
+  results: { name: string; url: string }[];
+};
+
 export type Pokemon = {
   name: string;
   originalName: string;

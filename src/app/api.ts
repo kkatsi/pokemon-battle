@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Move, Pokemon } from "../types";
+import { Move, PaginatedPokemonNamesResult, Pokemon } from "../types";
 import {
   capitalizeFirstLetter,
   getFourRandomMoves,
@@ -13,6 +13,22 @@ export const pokemonApi = createApi({
   reducerPath: "pokemonApi",
   baseQuery: fetchBaseQuery({ baseUrl: "https://pokeapi.co/api/v2/" }),
   endpoints: (builder) => ({
+    getPokemonNames: builder.query<PaginatedPokemonNamesResult, string>({
+      query: (url) => url,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      // Always merge incoming data to the cache entry
+      merge: (currentCache, newItems) => {
+        currentCache.results.push(...newItems.results);
+        currentCache.next = newItems.next;
+        return currentCache;
+      },
+      // Refetch when the page arg changes
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+    }),
     getPokemonByName: builder.query<Pokemon, string>({
       query: (name) => `pokemon/${name}`,
       transformResponse: (pokemon: any) => ({
@@ -92,5 +108,8 @@ export const pokemonApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetPokemonByNameQuery, useGetPokemonMovesetByNameQuery } =
-  pokemonApi;
+export const {
+  useGetPokemonNamesQuery,
+  useGetPokemonByNameQuery,
+  useGetPokemonMovesetByNameQuery,
+} = pokemonApi;

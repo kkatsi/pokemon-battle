@@ -31,6 +31,19 @@ export const StyledBattleBuilderContainer = styled.div`
     max-width: 1400px;
     flex: 1;
 
+    .showcase {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: white;
+
+      span {
+        font-size: 18px;
+      }
+    }
+
     .hr {
       height: 90%;
       width: 100%;

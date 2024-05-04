@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { StyledBattleBuilderContainer } from "./BattleBuilder.styled";
+import React, { useEffect, useState } from "react";
+import { useGetPokemonNamesQuery } from "../../app/api";
 import { Pokemon } from "../../types";
+import { StyledBattleBuilderContainer } from "./BattleBuilder.styled";
+import PokemonList from "../PokemonList";
 
 interface BattleBuilderProps {
   onBattleStart: (userPokemonName: Pokemon, enemyPokemonName: Pokemon) => void;
@@ -14,14 +16,22 @@ const BattleBuilder: React.FC<BattleBuilderProps> = ({ onBattleStart }) => {
     <StyledBattleBuilderContainer>
       <h1>Pokémon Battle</h1>
       <div className="container">
-        <img src={userSelection?.sprites.showcase} alt="" />
-        <div className="pokemon-list"></div>
+        <div className="showcase">
+          <span>You</span>
+          <img src={userSelection?.sprites.showcase} alt="" />
+        </div>
+        <PokemonList player="you" onPokemonSelection={setYourPokemon} />
         <div className="hr"></div>
-        <div className="pokemon-list"></div>
-        <img src={enemySeletion?.sprites.showcase} alt="" />
+        <PokemonList player="enemy" onPokemonSelection={setEnemyPokemon} />
+        <div className="showcase">
+          <span>Enemy</span>
+          <img src={enemySeletion?.sprites.showcase} alt="" />
+        </div>
       </div>
       <button
-        onClick={() => onBattleStart(userSelection, enemySelection)}
+        onClick={() => {
+          //   onBattleStart(userSelection, enemySelection);
+        }}
         className="battle-button"
       >
         Battle now!
