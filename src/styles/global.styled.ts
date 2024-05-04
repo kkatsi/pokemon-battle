@@ -15,9 +15,6 @@ const GlobalStyle = createGlobalStyle`
           url('./fonts/Pokemon-text.ttf') format('truetype'),
    }
 
-   *{
-        font-family: "Pokemon Text";
-   }
    `;
 
 export default GlobalStyle;

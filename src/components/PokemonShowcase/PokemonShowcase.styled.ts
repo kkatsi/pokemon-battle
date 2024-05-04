@@ -10,7 +10,9 @@ export const StyledPokemonShowcaseContainer = styled.div`
 
   span {
     font-size: 18px;
+    font-weight: bold;
     text-transform: capitalize;
+    font-family: "Raleway", sans-serif;
   }
 
   img {

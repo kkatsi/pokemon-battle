@@ -40,7 +40,8 @@ export const StyledPokemonListContainer = styled.div`
       button {
         text-transform: capitalize;
         color: white;
-        font-size: 14px;
+        font-size: 16px;
+        font-family: "Raleway", sans-serif;
         outline: 0;
         border: 0;
         background-color: transparent;

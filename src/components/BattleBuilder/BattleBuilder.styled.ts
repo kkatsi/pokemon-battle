@@ -48,6 +48,8 @@ export const StyledBattleBuilderContainer = styled.div`
     font-size: 16px;
     padding: 16px;
     cursor: pointer;
+    font-weight: bold;
+    font-family: "Raleway", sans-serif;
 
     &:disabled {
       opacity: 0.3;
