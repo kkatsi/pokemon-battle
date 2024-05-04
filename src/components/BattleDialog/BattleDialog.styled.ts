@@ -6,8 +6,9 @@ export const StyledBattleDialog = styled.dialog`
   max-width: 1000px;
   background-color: white;
   position: relative;
+  padding: 0;
   &::backdrop {
     background-color: black;
-    opacity: 0.7;
+    opacity: 0.9;
   }
 `;

@@ -26,23 +26,10 @@ export const StyledBattleBuilderContainer = styled.div`
   .container {
     display: grid;
     gap: 16px;
-    grid-template-columns: 1fr 250px 1px 250px 1fr;
+    grid-template-columns: 1fr 250px 3px 250px 1fr;
     width: 100%;
     max-width: 1400px;
     flex: 1;
-
-    .showcase {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      color: white;
-
-      span {
-        font-size: 18px;
-      }
-    }
 
     .hr {
       height: 90%;
@@ -61,5 +48,10 @@ export const StyledBattleBuilderContainer = styled.div`
     font-size: 16px;
     padding: 16px;
     cursor: pointer;
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   }
 `;

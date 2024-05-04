@@ -1,10 +1,11 @@
 import React, { useRef } from "react";
 import useGetPokemoNamesInfiniteQuery from "../../hooks/useGetPokemoNamesInfiniteQuery";
 import { StyledPokemonListContainer } from "./PokemonList.styled";
+import { updateQueryStringParam } from "../../utils/helper";
 
 interface PokemonListProps {
   player: "you" | "enemy";
-  onPokemonSelection: (x: { name: string; url: string }) => void;
+  onPokemonSelection: (x: string) => void;
 }
 
 const PokemonList: React.FC<PokemonListProps> = ({
@@ -25,6 +26,11 @@ const PokemonList: React.FC<PokemonListProps> = ({
     if (element) observer.current.observe(element);
   };
 
+  const handlePokemonSelection = async (pokemonName: string) => {
+    onPokemonSelection(pokemonName);
+    updateQueryStringParam(player, pokemonName);
+  };
+
   return (
     <StyledPokemonListContainer>
       <ul>
@@ -37,7 +43,7 @@ const PokemonList: React.FC<PokemonListProps> = ({
                 : undefined
             }
           >
-            <button onClick={() => onPokemonSelection(pokemonEntry)}>
+            <button onClick={() => handlePokemonSelection(pokemonEntry.name)}>
               {pokemonEntry.name}
             </button>
           </li>

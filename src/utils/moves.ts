@@ -883,3 +883,5 @@ const isSlept = (effect: string) => effect.toLowerCase().includes("sleep");
 const isConfused = (effect: string) => effect.toLowerCase().includes("confus");
 export const hasRecoil = (effect: string) =>
   effect.toLowerCase().includes("recoil");
+export const hasDrain = (effect: string) =>
+  effect.toLowerCase().includes("drain");

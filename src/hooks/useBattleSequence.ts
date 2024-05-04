@@ -20,7 +20,7 @@ import {
   calculateAttacker,
   calculateHealthAnimationDuration,
   calculateMoveImpact,
-  isSuccessFull,
+  isSuccessful,
 } from "../utils/battle";
 import { wait } from "../utils/helper";
 import { adjustPokemonStat } from "../utils/stats";
@@ -105,22 +105,24 @@ const useBattleSequence = ({
   );
 
   const adjustHealth = useCallback(
-    async (playerName: string, damage: number) => {
-      const animationDuration = calculateHealthAnimationDuration(damage);
+    async (playerName: string, amount: number, isGaining?: boolean) => {
+      const animationDuration = calculateHealthAnimationDuration(amount);
       dispatch(setHealthAnimationDuration(animationDuration));
-      if (playerName === enemy.name)
-        setEnemyHealth((prevValue) => {
-          const result = prevValue - damage;
-          return result < 0 ? 0 : result;
-        });
-      else
-        setYourHealth((prevValue) => {
-          const result = prevValue - damage;
-          return result < 0 ? 0 : result;
-        });
+
+      const targetHealthUpdater =
+        playerName === enemy.name ? setEnemyHealth : setYourHealth;
+      const targetMaxHealth =
+        playerName === you.name ? you.maxHealth : enemy.maxHealth;
+      const operator = isGaining ? "+" : "-";
+
+      targetHealthUpdater((prevHealth) => {
+        const result = prevHealth + (operator === "+" ? amount : -amount);
+        return Math.min(Math.max(result, 0), targetMaxHealth);
+      });
+
       await wait(animationDuration + 500);
     },
-    [dispatch, enemy.name]
+    [dispatch, enemy.maxHealth, enemy.name, you.maxHealth, you.name]
   );
 
   const handleEffectivenessMessage = useCallback(
@@ -147,31 +149,31 @@ const useBattleSequence = ({
 
   const handleSideEffect = useCallback(
     async (sideEffect: Exclude<Condition, UnknownEffect>, name: string) => {
-      if (!isSuccessFull(sideEffect.chanceToHit)) return;
-      if (
+      const isAlreadyEffected =
         (name === you.name && yourSideEffect) ||
-        (name === enemy.name && enemySideEffect)
-      )
-        setText(`${name} is already effected!`);
-      else {
-        name === you.name
-          ? setYourSideEffect(sideEffect)
-          : setEnemySideEffect(sideEffect);
-        switch (sideEffect.name) {
-          case ConditionName.FREEZE:
-            setText(`${name} was frozen solid!`);
-            break;
-          case ConditionName.SLEEP:
-            setText(`${name} fell asleep!`);
-            break;
-          case ConditionName.PARALYSIS:
-            setText(`${name} is paralyzed! It can't move!`);
-            dispatch(adjustPokemonStat(name, "speed", sideEffect.speed));
-            dispatch(adjustPokemonStat(name, "accuracy", sideEffect.accuracy));
-            break;
-          default:
-            break;
-        }
+        (name === enemy.name && enemySideEffect);
+
+      if (!isSuccessful(sideEffect.chanceToHit)) return;
+      if (isAlreadyEffected) return setText(`${name} is already effected!`);
+
+      name === you.name
+        ? setYourSideEffect(sideEffect)
+        : setEnemySideEffect(sideEffect);
+
+      switch (sideEffect.name) {
+        case ConditionName.FREEZE:
+          setText(`${name} was frozen solid!`);
+          break;
+        case ConditionName.SLEEP:
+          setText(`${name} fell asleep!`);
+          break;
+        case ConditionName.PARALYSIS:
+          setText(`${name} is paralyzed! It can't move!`);
+          dispatch(adjustPokemonStat(name, "speed", sideEffect.speed));
+          dispatch(adjustPokemonStat(name, "accuracy", sideEffect.accuracy));
+          break;
+        default:
+          break;
       }
 
       await wait(TEXT_ANIMATION_DURATION);
@@ -181,37 +183,38 @@ const useBattleSequence = ({
 
   const handleMoveDisableSideEffect = useCallback(
     async (activeSideEffect: Condition, name: string) => {
+      console.log(activeSideEffect);
       let canMove = true;
+
+      const setSideEffect = async (sideEffectText: string) => {
+        setText(sideEffectText);
+        canMove = false;
+        await wait(TEXT_ANIMATION_DURATION);
+      };
+
+      const removeSideEffect = async (sideEffectRemovalText: string) => {
+        setText(sideEffectRemovalText);
+        name === you.name
+          ? setYourSideEffect(undefined)
+          : setEnemySideEffect(undefined);
+        await wait(TEXT_ANIMATION_DURATION);
+      };
+
       switch (activeSideEffect.name) {
         case ConditionName.FREEZE:
-          if (!isSuccessFull(activeSideEffect.chanceToReset)) {
-            setText(`${name} is frozen solid!`);
-            canMove = false;
-          } else {
-            setText(`${name} is not longer frozen!`);
-            name === you.name
-              ? setYourSideEffect(undefined)
-              : setEnemySideEffect(undefined);
-          }
-          await wait(TEXT_ANIMATION_DURATION);
+          if (!isSuccessful(activeSideEffect.chanceToReset))
+            setSideEffect(`${name} is frozen solid!`);
+          else removeSideEffect(`${name} is not longer frozen!`);
           break;
         case ConditionName.SLEEP:
-          if (!isSuccessFull(activeSideEffect.chanceToReset)) {
-            setText(`${name} is fast asleep...`);
-            canMove = false;
-          } else {
-            setText(`${name} woke up!`);
-            name === you.name
-              ? setYourSideEffect(undefined)
-              : setEnemySideEffect(undefined);
-          }
-          await wait(TEXT_ANIMATION_DURATION);
+          if (!isSuccessful(activeSideEffect.chanceToReset))
+            setSideEffect(`${name} is fast asleep...`);
+          else removeSideEffect(`${name} woke up!`);
           break;
         case ConditionName.CONFUSION:
-          setText(`${name} is confused!`);
-          await wait(TEXT_ANIMATION_DURATION);
-          if (!isSuccessFull(activeSideEffect.chanceToReset)) {
-            if (!isSuccessFull(CHANCE_TO_ATTACK_IN_CONFUSION)) {
+          setSideEffect(`${name} is confused!`);
+          if (!isSuccessful(activeSideEffect.chanceToReset)) {
+            if (!isSuccessful(CHANCE_TO_ATTACK_IN_CONFUSION)) {
               setText(`It hurt itself in it's confusion!`);
               await wait(TEXT_ANIMATION_DURATION);
               await animateCharacter({
@@ -220,18 +223,8 @@ const useBattleSequence = ({
               });
               await adjustHealth(name, 100 / 2 + 1);
               canMove = false;
-            } else {
-              await wait(TEXT_ANIMATION_DURATION);
-              canMove = true;
             }
-          } else {
-            setText(`${name} snapped out of confusion!`);
-            name === you.name
-              ? setYourSideEffect(undefined)
-              : setEnemySideEffect(undefined);
-            await wait(TEXT_ANIMATION_DURATION);
-            canMove = true;
-          }
+          } else removeSideEffect(`${name} snapped out of confusion!`);
           break;
         default:
           break;
@@ -291,7 +284,7 @@ const useBattleSequence = ({
           activeSideEffect,
           attacker.name
         );
-      if (!isSuccessFull(attacker.stats.accuracy)) canMove = false;
+      if (!isSuccessful(attacker.stats.accuracy)) canMove = false;
       if (!canMove) {
         setIsAttackInProgress(false);
         return;
@@ -324,6 +317,11 @@ const useBattleSequence = ({
         setText(`${attacker.name} was hurt by the recoil!`);
         await wait(TEXT_ANIMATION_DURATION);
         await adjustHealth(attacker.name, damage.recoilDamage);
+      }
+      if (damage.healthToDrain) {
+        setText(`${defender.name} had it's energy drained!`);
+        await wait(TEXT_ANIMATION_DURATION);
+        await adjustHealth(attacker.name, damage.healthToDrain, true);
       }
       setIsAttackInProgress(false);
     },

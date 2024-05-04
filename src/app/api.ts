@@ -35,7 +35,6 @@ export const pokemonApi = createApi({
         name: capitalizeFirstLetter(pokemon.name),
         originalName: pokemon.name,
         sprites: {
-          showcase: pokemon.sprites.front_default,
           default: pokemon.sprites.other["official-artwork"].front_default,
           battle_back:
             pokemon.sprites.versions["generation-v"]["black-white"].animated
@@ -110,6 +109,7 @@ export const pokemonApi = createApi({
 // auto-generated based on the defined endpoints
 export const {
   useGetPokemonNamesQuery,
+  useLazyGetPokemonByNameQuery,
   useGetPokemonByNameQuery,
   useGetPokemonMovesetByNameQuery,
 } = pokemonApi;

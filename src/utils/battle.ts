@@ -1,6 +1,6 @@
 import { Condition, Move, Pokemon } from "../types";
 import { extractPercentageFromString } from "./helper";
-import { getConditionEffect, hasRecoil } from "./moves";
+import { getConditionEffect, hasDrain, hasRecoil } from "./moves";
 
 export const calculateAttacker = (
   you: Pokemon,
@@ -29,7 +29,7 @@ export const calculateAttacker = (
       };
 };
 
-export const isSuccessFull = (numberBetweenOneAndOneHundred: number) =>
+export const isSuccessful = (numberBetweenOneAndOneHundred: number) =>
   getARandomChanceBetweenOneAndOneHundred() <= numberBetweenOneAndOneHundred;
 
 export const calculateMoveImpact = (
@@ -39,11 +39,12 @@ export const calculateMoveImpact = (
 ) => {
   let damage = 0,
     damageType,
+    healthToDrain = 0,
     recoilDamage = 0;
   const effectiveness = getTypeEffectiveness(move.type, defender.type);
   if (
     move.accuracy &&
-    !isSuccessFull(move.accuracy * (attacker.stats.accuracy / 100))
+    !isSuccessful(move.accuracy * (attacker.stats.accuracy / 100))
   )
     return {
       damage: { value: damage, effectiveness },
@@ -90,8 +91,23 @@ export const calculateMoveImpact = (
       : 0;
   }
 
+  if (move.effect && hasDrain(move.effect)) {
+    const drainPercentageOfDamageDealt = extractPercentageFromString(
+      move.effect
+    );
+    healthToDrain = drainPercentageOfDamageDealt
+      ? calculateHealthToDrain(drainPercentageOfDamageDealt, damage)
+      : 0;
+  }
+
   return {
-    damage: { value: damage, type: damageType, effectiveness, recoilDamage },
+    damage: {
+      value: damage,
+      type: damageType,
+      effectiveness,
+      recoilDamage,
+      healthToDrain,
+    },
     sideEffect:
       move.effect && move.effect_chance
         ? getConditionEffect(move.effect, move.effect_chance)
@@ -121,10 +137,11 @@ export const calculatePokemonDamage = (
   return totalDamage;
 };
 
-export const calculateRecoilDamage = (
-  recoilPercentage: number,
-  power: number
-) => (recoilPercentage / 100) * power;
+const calculateRecoilDamage = (recoilPercentage: number, power: number) =>
+  (recoilPercentage / 100) * power;
+
+const calculateHealthToDrain = (drainPercentage: number, damageDealt: number) =>
+  (drainPercentage / 100) * damageDealt;
 
 export const calculateMaxStat = (
   baseStat: number,

@@ -1,36 +1,42 @@
-import React, { useEffect, useState } from "react";
-import { useGetPokemonNamesQuery } from "../../app/api";
-import { Pokemon } from "../../types";
-import { StyledBattleBuilderContainer } from "./BattleBuilder.styled";
+import React, { useState } from "react";
 import PokemonList from "../PokemonList";
+import PokemonShowcase from "../PokemonShowcase";
+import { StyledBattleBuilderContainer } from "./BattleBuilder.styled";
 
 interface BattleBuilderProps {
-  onBattleStart: (userPokemonName: Pokemon, enemyPokemonName: Pokemon) => void;
+  onBattleStart: (userPokemonName: string, enemyPokemonName: string) => void;
 }
 
 const BattleBuilder: React.FC<BattleBuilderProps> = ({ onBattleStart }) => {
-  const [userSelection, setUserSelection] = useState<Pokemon>();
-  const [enemySeletion, setEnemySelection] = useState<Pokemon>();
+  const [userSelectedPokemonName, setUserSelectedPokemonName] =
+    useState<string>();
+  const [enemySelectedPokemonName, setEnemySelectedPokemonName] =
+    useState<string>();
 
   return (
     <StyledBattleBuilderContainer>
       <h1>Pokémon Battle</h1>
       <div className="container">
-        <div className="showcase">
-          <span>You</span>
-          <img src={userSelection?.sprites.showcase} alt="" />
-        </div>
-        <PokemonList player="you" onPokemonSelection={setYourPokemon} />
+        <PokemonShowcase player="you" pokemonName={userSelectedPokemonName} />
+        <PokemonList
+          player="you"
+          onPokemonSelection={setUserSelectedPokemonName}
+        />
         <div className="hr"></div>
-        <PokemonList player="enemy" onPokemonSelection={setEnemyPokemon} />
-        <div className="showcase">
-          <span>Enemy</span>
-          <img src={enemySeletion?.sprites.showcase} alt="" />
-        </div>
+        <PokemonList
+          player="enemy"
+          onPokemonSelection={setEnemySelectedPokemonName}
+        />
+        <PokemonShowcase
+          player="enemy"
+          pokemonName={enemySelectedPokemonName}
+        />
       </div>
       <button
+        disabled={!userSelectedPokemonName || !enemySelectedPokemonName}
         onClick={() => {
-          //   onBattleStart(userSelection, enemySelection);
+          if (userSelectedPokemonName && enemySelectedPokemonName)
+            onBattleStart(userSelectedPokemonName, enemySelectedPokemonName);
         }}
         className="battle-button"
       >

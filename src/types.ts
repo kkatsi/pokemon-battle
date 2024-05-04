@@ -9,7 +9,6 @@ export type Pokemon = {
   name: string;
   originalName: string;
   sprites: {
-    showcase: string;
     default: string;
     battle_front: string;
     battle_back: string;

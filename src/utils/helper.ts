@@ -1,6 +1,5 @@
 import { totalAllowedMoveNames } from "./moves";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const wait = (ms: number) =>
   new Promise<void>((res) => {
     setTimeout(() => {
@@ -11,23 +10,21 @@ export const wait = (ms: number) =>
 export const getFourRandomMoves = (
   moveList: { move: { name: string; url: string } }[]
 ) => {
-  const getAllowedRandomMoves = (movesFound?: number) => {
-    const randomMoves = getRandomItems(
-      moveList,
-      4 - (movesFound || 0)
-    ) as typeof moveList;
+  const getAllowedRandomMoves = (moves: typeof moveList) => {
+    const randomMoves = getRandomItems(moves, 4) as typeof moveList;
 
-    const randomMovesWithoutStatusTypeExceptAilment = randomMoves.filter(
-      (move) => totalAllowedMoveNames.includes(move.move.name)
-    );
-    return randomMovesWithoutStatusTypeExceptAilment;
+    return randomMoves;
   };
 
-  let finalMoves: { move: { name: string; url: string } }[] = [];
+  const movesWithoutStatusTypeExceptAilment = moveList.filter((move) =>
+    totalAllowedMoveNames.includes(move.move.name)
+  );
 
-  while (finalMoves.length < 4) {
-    finalMoves = getAllowedRandomMoves(finalMoves.length);
-  }
+  let finalMoves: typeof moveList = [];
+
+  if (movesWithoutStatusTypeExceptAilment.length <= 4)
+    finalMoves = movesWithoutStatusTypeExceptAilment;
+  else finalMoves = getAllowedRandomMoves(movesWithoutStatusTypeExceptAilment);
 
   return finalMoves.map((move) => move.move.name as string);
 };
@@ -85,8 +82,9 @@ export function weightedRandomIndex(weights: number[]): number {
 }
 
 export function extractPercentageFromString(str: string) {
-  // Regular expression to match percentage patterns
-  const regex = /(\d+|half)\/(\d+)/;
+  str = str.replace(/\bhalf\b/g, "1/2");
+
+  const regex = /(\d+)\/(\d+)/;
 
   // Match the percentage pattern in the string
   const match = str.match(regex);
@@ -113,3 +111,13 @@ export function extractPercentageFromString(str: string) {
     return null;
   }
 }
+
+export const updateQueryStringParam = (name: string, value: string) => {
+  if ("URLSearchParams" in window) {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set(name, value);
+    const newRelativePathQuery =
+      window.location.pathname + "?" + searchParams.toString();
+    history.pushState(null, "", newRelativePathQuery);
+  }
+};
