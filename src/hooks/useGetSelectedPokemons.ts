@@ -7,11 +7,11 @@ import { Pokemon } from "../types";
 
 const useGetSelectedPokemons = () => {
   const query = new URLSearchParams(location.search);
-  const you = query.get("you");
+  const user = query.get("user");
   const enemy = query.get("enemy");
 
   const { data: yourPokemonWithoutMoves } = useGetPokemonByNameQuery(
-    you ?? skipToken
+    user ?? skipToken
   );
   const { data: enemyPokemonWithoutMoves } = useGetPokemonByNameQuery(
     enemy ?? skipToken

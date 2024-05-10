@@ -38,7 +38,7 @@ export const StyledPokemonListContainer = styled.div`
       border-radius: 8px;
 
       &.active {
-        &.you {
+        &.user {
           button {
             background: #0075be;
           }

@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { selectHealthAnimationDuration } from "../../../app/uiSlice";
 
 interface HealthBarProps {
-  player: "you" | "enemy";
+  player: "user" | "enemy";
   name: string;
   level: number;
   health: number;
@@ -68,8 +68,8 @@ const HealthBar: React.FC<HealthBarProps> = ({
   return (
     <StyledHealthBarContainer
       style={{
-        bottom: player === "you" ? "calc(105px + 5%)" : "65%",
-        right: player === "you" ? "20%" : "auto",
+        bottom: player === "user" ? "calc(105px + 5%)" : "65%",
+        right: player === "user" ? "20%" : "auto",
         left: player === "enemy" ? "20%" : "auto",
       }}
     >
@@ -102,9 +102,9 @@ const HealthBar: React.FC<HealthBarProps> = ({
       </div>
       <div
         className="health-stats-container"
-        style={{ height: player === "you" ? "12px" : "4px" }}
+        style={{ height: player === "user" ? "12px" : "4px" }}
       >
-        {player === "you" && (
+        {player === "user" && (
           <span className="stat">
             <span ref={animatedHealthRef}>{health}</span> / {maxHealth}
           </span>

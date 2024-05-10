@@ -4,7 +4,7 @@ import { StyledPokemonListContainer } from "./PokemonList.styled";
 import { updateQueryStringParam } from "../../utils/helper";
 
 interface PokemonListProps {
-  player: "you" | "enemy";
+  player: "user" | "enemy";
   onPokemonSelection: (x: string) => void;
 }
 

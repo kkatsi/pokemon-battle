@@ -8,19 +8,19 @@ import HealthBar from "./HealthBar";
 
 interface BattleScreenProps {
   onBattleEnd: () => void;
-  you: Pokemon;
+  user: Pokemon;
   enemy: Pokemon;
 }
 
 export const BattleScreen: React.FC<BattleScreenProps> = ({
   onBattleEnd,
-  you,
+  user,
   enemy,
 }) => {
-  const [enemyMove, setEnemyMove] = useState(
-    minmaxMoveDecision(enemy.moves ?? [], enemy, you)
+  const [enemyMove, setEnemyMove] = useState<Move | undefined>(
+    minmaxMoveDecision(enemy.moves ?? [], enemy, user)
   );
-  const [yourMove, setYourMove] = useState<Move | null>(null);
+  const [yourMove, setUserrMove] = useState<Move>();
   const youRef = useRef<HTMLDivElement>(null);
   const enemyRef = useRef<HTMLDivElement>(null);
   const {
@@ -33,11 +33,11 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
     isBattleEnd,
     closeModal,
   } = useBattleSequence({
-    you,
+    user,
     enemy,
     setEnemyMove,
     yourMove,
-    setYourMove,
+    setUserrMove,
     enemyMove,
     youElement: youRef.current,
     enemyElement: enemyRef.current,
@@ -49,15 +49,15 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
 
   return (
     <StyledBattleScreenContainer>
-      <div className={`you ${you.name}`} id="you" ref={youRef}>
-        <img src={you.sprites.battle_back} alt="" />
+      <div className={`user ${user.name}`} id="user" ref={youRef}>
+        <img src={user.sprites.battle_back} alt="" />
       </div>
       <HealthBar
-        player="you"
-        name={you.name}
+        player="user"
+        name={user.name}
         level={100}
         health={yourHealth}
-        maxHealth={you.maxHealth}
+        maxHealth={user.maxHealth}
         sideEffect={yourSideEffect?.name}
       />
       <div className={`enemy ${enemy.name}`} id="enemy" ref={enemyRef}>
@@ -74,8 +74,8 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
       <Footer
         disabled={isTurnInProgress || isBattleEnd}
         displayText={text}
-        moveSet={you.moves ?? []}
-        onMoveSelect={(move) => setYourMove(move)}
+        moveSet={user.moves ?? []}
+        onMoveSelect={(move) => setUserrMove(move)}
       />
     </StyledBattleScreenContainer>
   );

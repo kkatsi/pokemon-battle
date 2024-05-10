@@ -19,7 +19,11 @@ export const pokemonApi = createApi({
         return endpointName;
       },
       // Always merge incoming data to the cache entry
-      merge: (currentCache, newItems) => {
+      merge: (currentCache, newItems, { arg }) => {
+        const offset = arg.split("?")[1].split("&")[0].split("=")[1];
+
+        if (offset === "0") return newItems;
+
         currentCache.results.push(...newItems.results);
         currentCache.next = newItems.next;
         return currentCache;

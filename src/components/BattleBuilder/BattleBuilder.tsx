@@ -17,9 +17,9 @@ const BattleBuilder: React.FC<BattleBuilderProps> = ({ onBattleStart }) => {
     <StyledBattleBuilderContainer>
       <h1>Pokémon Battle</h1>
       <div className="container">
-        <PokemonShowcase player="you" pokemonName={userSelectedPokemonName} />
+        <PokemonShowcase player="user" pokemonName={userSelectedPokemonName} />
         <PokemonList
-          player="you"
+          player="user"
           onPokemonSelection={setUserSelectedPokemonName}
         />
         <div className="hr"></div>

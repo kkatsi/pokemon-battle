@@ -4,7 +4,7 @@ import { useGetPokemonByNameQuery } from "../../app/api";
 import { StyledPokemonShowcaseContainer } from "./PokemonShowcase.styled";
 
 interface PokemonShowcaseProps {
-  player: "you" | "enemy";
+  player: "user" | "enemy";
   pokemonName?: string;
 }
 
@@ -24,7 +24,7 @@ const PokemonShowcase: React.FC<PokemonShowcaseProps> = ({
 
   return (
     <StyledPokemonShowcaseContainer>
-      <span>{player}</span>
+      <span>{player === "user" ? "you" : "enemy"}</span>
       {isLoading && <div className="loader"></div>}
       <img
         src={pokemon?.sprites.battle_front}

@@ -24,14 +24,12 @@ const BattleDialog: React.FC<BattleDialogProps> = ({ onBattleEnd }) => {
     }
   }, []);
 
-  // if (!yourPokemon || !enemyPokemon) return <></>;
-
   return (
     <StyledBattleDialog ref={dialogRef}>
-      <IntroScreen you={yourPokemon} enemy={enemyPokemon} />
+      <IntroScreen user={yourPokemon} enemy={enemyPokemon} />
       {showBattleScreen && yourPokemon?.moves && enemyPokemon?.moves && (
         <BattleScreen
-          you={yourPokemon}
+          user={yourPokemon}
           enemy={enemyPokemon}
           onBattleEnd={onBattleEnd}
         />

@@ -5,12 +5,12 @@ import { findColor } from "../../utils/color";
 import { wait } from "../../utils/helper";
 
 interface IntroScreenProps {
-  you?: Pokemon;
+  user?: Pokemon;
   enemy?: Pokemon;
 }
 
-export const IntroScreen: React.FC<IntroScreenProps> = ({ you, enemy }) => {
-  const yourColor = findColor(you?.type[0]);
+export const IntroScreen: React.FC<IntroScreenProps> = ({ user, enemy }) => {
+  const yourColor = findColor(user?.type[0]);
   const enemyColor = findColor(enemy?.type[0]);
 
   const [showVS, setShowVS] = useState(false);
@@ -53,7 +53,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ you, enemy }) => {
           ref={leftSideRef}
           style={{ backgroundColor: yourColor }}
         >
-          <img src={you?.sprites.default} alt="" />
+          <img src={user?.sprites.default} alt="" />
         </div>
         {showVS && (
           <div className="versus-container" ref={vsRef}>

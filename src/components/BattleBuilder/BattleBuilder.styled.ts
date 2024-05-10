@@ -26,16 +26,17 @@ export const StyledBattleBuilderContainer = styled.div`
   .container {
     display: grid;
     gap: 16px;
-    grid-template-columns: 1fr 250px 3px 250px 1fr;
+    grid-template-columns: 1fr 250px 2px 250px 1fr;
     width: 100%;
     max-width: 1400px;
     flex: 1;
 
     .hr {
-      height: 90%;
+      height: 50%;
       width: 100%;
-      background-color: white;
+      background-color: transparent;
       align-self: center;
+      border: 2px dashed #de0030;
     }
   }
 

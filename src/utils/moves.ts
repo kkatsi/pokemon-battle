@@ -159,15 +159,13 @@ const burnMoveNames = [
 ];
 
 const freezeMoveNames = [
-  [
-    "ice-punch",
-    "ice-beam",
-    "blizzard",
-    "powder-snow",
-    "ice-fang",
-    "freeze-dry",
-    "freezing-glare",
-  ],
+  "ice-punch",
+  "ice-beam",
+  "blizzard",
+  "powder-snow",
+  "ice-fang",
+  "freeze-dry",
+  "freezing-glare",
 ];
 
 const sleepMoveNames = [
@@ -546,7 +544,7 @@ const generallyAllowedMoveNames = [
   "foul-play",
   "simple-beam",
   "entrainment",
-  "after-you",
+  "after-user",
   "round",
   "echoed-voice",
   "chip-away",

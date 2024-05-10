@@ -2,7 +2,7 @@ import { findColor } from "./color";
 import { wait } from "./helper";
 
 export const executeSpecialAttackAnimation = async (
-  player: "you" | "enemy",
+  player: "user" | "enemy",
   type: string,
   container: HTMLElement
 ) => {

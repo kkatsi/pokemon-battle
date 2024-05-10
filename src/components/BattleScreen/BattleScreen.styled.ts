@@ -9,7 +9,7 @@ to{
 }
 `;
 
-const physicalAttackYou = keyframes`
+const physicalAttackUser = keyframes`
 0%{
   transform: translateY(0%);
 
@@ -58,7 +58,7 @@ export const StyledBattleScreenContainer = styled.div`
     z-index: -1;
   }
 
-  .you,
+  .user,
   .enemy {
     position: absolute;
     z-index: 999;
@@ -84,14 +84,14 @@ export const StyledBattleScreenContainer = styled.div`
     }
   }
 
-  .you {
+  .user {
     left: 20%;
     bottom: 20%;
 
     &.physical {
       z-index: 9999;
       img {
-        animation: ${physicalAttackYou} 0.8s ease-in-out;
+        animation: ${physicalAttackUser} 0.8s ease-in-out;
       }
     }
     &.special {
@@ -112,7 +112,7 @@ export const StyledBattleScreenContainer = styled.div`
   }
 
   @media (max-width: 750px) {
-    .you,
+    .user,
     .enemy {
       img {
         width: 150%;
@@ -125,7 +125,7 @@ export const StyledBattleScreenContainer = styled.div`
     }
   }
   @media (max-width: 550px) {
-    .you,
+    .user,
     .enemy {
       img {
         width: 100%;

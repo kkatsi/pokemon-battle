@@ -3,16 +3,16 @@ import { extractPercentageFromString } from "./helper";
 import { getConditionEffect, hasDrain, hasRecoil } from "./moves";
 
 export const calculateAttacker = (
-  you: Pokemon,
+  user: Pokemon,
   enemy: Pokemon,
   yourMove: Move,
   enemyMove: Move,
   yourSideEffect?: Condition,
   enemySideEffect?: Condition
 ) => {
-  return you.stats.speed >= enemy.stats.speed
+  return user.stats.speed >= enemy.stats.speed
     ? {
-        firstPlayer: you,
+        firstPlayer: user,
         secondPlayer: enemy,
         firstMove: yourMove,
         secondMove: enemyMove,
@@ -21,7 +21,7 @@ export const calculateAttacker = (
       }
     : {
         firstPlayer: enemy,
-        secondPlayer: you,
+        secondPlayer: user,
         firstMove: enemyMove,
         secondMove: yourMove,
         firstSideEffect: enemySideEffect,
