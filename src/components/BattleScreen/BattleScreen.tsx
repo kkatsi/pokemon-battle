@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import useBattleSequence from "../../hooks/useBattleSequence";
-import { Move, Pokemon } from "../../types";
+import { Move, Player, Pokemon } from "../../types";
 import { minmaxMoveDecision } from "../../utils/moves";
 import { StyledBattleScreenContainer } from "./BattleScreen.styled";
 import Footer from "./Footer";
@@ -20,13 +20,13 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
   const [enemyMove, setEnemyMove] = useState<Move | undefined>(
     minmaxMoveDecision(enemy.moves ?? [], enemy, user)
   );
-  const [yourMove, setUserrMove] = useState<Move>();
-  const youRef = useRef<HTMLDivElement>(null);
+  const [userMove, setUserMove] = useState<Move>();
+  const userRef = useRef<HTMLDivElement>(null);
   const enemyRef = useRef<HTMLDivElement>(null);
   const {
-    yourHealth,
+    userHealth,
     enemyHealth,
-    yourSideEffect,
+    userSideEffect,
     enemySideEffect,
     text,
     isTurnInProgress,
@@ -36,10 +36,10 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
     user,
     enemy,
     setEnemyMove,
-    yourMove,
-    setUserrMove,
+    userMove,
+    setUserMove,
     enemyMove,
-    youElement: youRef.current,
+    userElement: userRef.current,
     enemyElement: enemyRef.current,
   });
 
@@ -49,22 +49,22 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
 
   return (
     <StyledBattleScreenContainer>
-      <div className={`user ${user.name}`} id="user" ref={youRef}>
+      <div className={`user ${user.name}`} id={Player.User} ref={userRef}>
         <img src={user.sprites.battle_back} alt="" />
       </div>
       <HealthBar
-        player="user"
+        player={Player.User}
         name={user.name}
         level={100}
-        health={yourHealth}
+        health={userHealth}
         maxHealth={user.maxHealth}
-        sideEffect={yourSideEffect?.name}
+        sideEffect={userSideEffect?.name}
       />
-      <div className={`enemy ${enemy.name}`} id="enemy" ref={enemyRef}>
+      <div className={`enemy ${enemy.name}`} id={Player.Enemy} ref={enemyRef}>
         <img src={enemy.sprites.battle_front} alt="" />
       </div>
       <HealthBar
-        player="enemy"
+        player={Player.Enemy}
         name={enemy.name}
         level={100}
         health={enemyHealth}
@@ -75,7 +75,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
         disabled={isTurnInProgress || isBattleEnd}
         displayText={text}
         moveSet={user.moves ?? []}
-        onMoveSelect={(move) => setUserrMove(move)}
+        onMoveSelect={(move) => setUserMove(move)}
       />
     </StyledBattleScreenContainer>
   );

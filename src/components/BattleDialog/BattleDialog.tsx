@@ -12,7 +12,7 @@ interface BattleDialogProps {
 const BattleDialog: React.FC<BattleDialogProps> = ({ onBattleEnd }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [showBattleScreen, setShowBattleScreen] = useState(false);
-  const { yourPokemon, enemyPokemon } = useGetSelectedPokemons();
+  const { userPokemon, enemyPokemon } = useGetSelectedPokemons();
 
   useEffect(() => {
     if (dialogRef.current) {
@@ -26,10 +26,10 @@ const BattleDialog: React.FC<BattleDialogProps> = ({ onBattleEnd }) => {
 
   return (
     <StyledBattleDialog ref={dialogRef}>
-      <IntroScreen user={yourPokemon} enemy={enemyPokemon} />
-      {showBattleScreen && yourPokemon?.moves && enemyPokemon?.moves && (
+      <IntroScreen user={userPokemon} enemy={enemyPokemon} />
+      {showBattleScreen && userPokemon?.moves && enemyPokemon?.moves && (
         <BattleScreen
-          user={yourPokemon}
+          user={userPokemon}
           enemy={enemyPokemon}
           onBattleEnd={onBattleEnd}
         />

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Move, PaginatedPokemonNamesResult, Pokemon } from "../types";
+import { Move, PaginatedPokemonNamesResult, Player, Pokemon } from "../types";
 import {
   capitalizeFirstLetter,
   getFourRandomMoves,
@@ -98,7 +98,9 @@ export const pokemonApi = createApi({
             type: moveData.type.name,
             damage_type: moveData.damage_class.name,
             target:
-              moveData.target.name === "selected-pokemon" ? "enemy" : "user",
+              moveData.target.name === "selected-pokemon"
+                ? Player.Enemy
+                : Player.User,
             id: moveData.id,
           });
         }

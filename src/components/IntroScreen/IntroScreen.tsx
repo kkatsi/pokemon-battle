@@ -10,7 +10,7 @@ interface IntroScreenProps {
 }
 
 export const IntroScreen: React.FC<IntroScreenProps> = ({ user, enemy }) => {
-  const yourColor = findColor(user?.type[0]);
+  const userColor = findColor(user?.type[0]);
   const enemyColor = findColor(enemy?.type[0]);
 
   const [showVS, setShowVS] = useState(false);
@@ -51,7 +51,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ user, enemy }) => {
         <div
           className="left"
           ref={leftSideRef}
-          style={{ backgroundColor: yourColor }}
+          style={{ backgroundColor: userColor }}
         >
           <img src={user?.sprites.default} alt="" />
         </div>
@@ -71,10 +71,10 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ user, enemy }) => {
             <span
               className="versus s"
               style={{
-                textShadow: `   -6px -6px 0 ${yourColor},  
-          6px -6px 0 ${yourColor},
-          -6px 6px 0 ${yourColor},
-           6px 6px 0 ${yourColor}`,
+                textShadow: `   -6px -6px 0 ${userColor},  
+          6px -6px 0 ${userColor},
+          -6px 6px 0 ${userColor},
+           6px 6px 0 ${userColor}`,
               }}
             >
               S

@@ -2,12 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 import { StyledHealthBarContainer } from "./HealthBar.styled";
 import { animateValue } from "../../../utils/helper";
 import { findColor } from "../../../utils/color";
-import { ConditionName } from "../../../types";
+import { ConditionName, Player } from "../../../types";
 import { useSelector } from "react-redux";
 import { selectHealthAnimationDuration } from "../../../app/uiSlice";
 
 interface HealthBarProps {
-  player: "user" | "enemy";
+  player: Player;
   name: string;
   level: number;
   health: number;
@@ -68,9 +68,9 @@ const HealthBar: React.FC<HealthBarProps> = ({
   return (
     <StyledHealthBarContainer
       style={{
-        bottom: player === "user" ? "calc(105px + 5%)" : "65%",
-        right: player === "user" ? "20%" : "auto",
-        left: player === "enemy" ? "20%" : "auto",
+        bottom: player === Player.User ? "calc(105px + 5%)" : "65%",
+        right: player === Player.User ? "20%" : "auto",
+        left: player === Player.Enemy ? "20%" : "auto",
       }}
     >
       <div className="name-and-level">
@@ -102,9 +102,9 @@ const HealthBar: React.FC<HealthBarProps> = ({
       </div>
       <div
         className="health-stats-container"
-        style={{ height: player === "user" ? "12px" : "4px" }}
+        style={{ height: player === Player.User ? "12px" : "4px" }}
       >
-        {player === "user" && (
+        {player === Player.User && (
           <span className="stat">
             <span ref={animatedHealthRef}>{health}</span> / {maxHealth}
           </span>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PokemonList from "../PokemonList";
 import PokemonShowcase from "../PokemonShowcase";
 import { StyledBattleBuilderContainer } from "./BattleBuilder.styled";
+import { Player } from "../../types";
 
 interface BattleBuilderProps {
   onBattleStart: (userPokemonName: string, enemyPokemonName: string) => void;
@@ -17,18 +18,21 @@ const BattleBuilder: React.FC<BattleBuilderProps> = ({ onBattleStart }) => {
     <StyledBattleBuilderContainer>
       <h1>Pokémon Battle</h1>
       <div className="container">
-        <PokemonShowcase player="user" pokemonName={userSelectedPokemonName} />
+        <PokemonShowcase
+          player={Player.User}
+          pokemonName={userSelectedPokemonName}
+        />
         <PokemonList
-          player="user"
+          player={Player.User}
           onPokemonSelection={setUserSelectedPokemonName}
         />
         <div className="hr"></div>
         <PokemonList
-          player="enemy"
+          player={Player.Enemy}
           onPokemonSelection={setEnemySelectedPokemonName}
         />
         <PokemonShowcase
-          player="enemy"
+          player={Player.Enemy}
           pokemonName={enemySelectedPokemonName}
         />
       </div>

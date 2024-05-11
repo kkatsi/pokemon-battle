@@ -2,9 +2,10 @@ import React, { useRef, useState } from "react";
 import useGetPokemoNamesInfiniteQuery from "../../hooks/useGetPokemoNamesInfiniteQuery";
 import { StyledPokemonListContainer } from "./PokemonList.styled";
 import { updateQueryStringParam } from "../../utils/helper";
+import { Player } from "../../types";
 
 interface PokemonListProps {
-  player: "user" | "enemy";
+  player: Player;
   onPokemonSelection: (x: string) => void;
 }
 

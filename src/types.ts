@@ -1,3 +1,8 @@
+export enum Player {
+  User = "user",
+  Enemy = "enemy",
+}
+
 export type PaginatedPokemonNamesResult = {
   count: number;
   next: string;

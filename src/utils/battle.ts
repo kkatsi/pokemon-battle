@@ -5,27 +5,27 @@ import { getConditionEffect, hasDrain, hasRecoil } from "./moves";
 export const calculateAttacker = (
   user: Pokemon,
   enemy: Pokemon,
-  yourMove: Move,
+  userMove: Move,
   enemyMove: Move,
-  yourSideEffect?: Condition,
+  userSideEffect?: Condition,
   enemySideEffect?: Condition
 ) => {
   return user.stats.speed >= enemy.stats.speed
     ? {
         firstPlayer: user,
         secondPlayer: enemy,
-        firstMove: yourMove,
+        firstMove: userMove,
         secondMove: enemyMove,
-        firstSideEffect: yourSideEffect,
+        firstSideEffect: userSideEffect,
         secondSideEffect: enemySideEffect,
       }
     : {
         firstPlayer: enemy,
         secondPlayer: user,
         firstMove: enemyMove,
-        secondMove: yourMove,
+        secondMove: userMove,
         firstSideEffect: enemySideEffect,
-        secondSideEffect: yourSideEffect,
+        secondSideEffect: userSideEffect,
       };
 };
 
@@ -38,7 +38,6 @@ export const calculateMoveImpact = (
   defender: Pokemon
 ) => {
   let damage = 0,
-    damageType,
     healthToDrain = 0,
     recoilDamage = 0;
   const effectiveness = getTypeEffectiveness(move.type, defender.type);
@@ -47,42 +46,37 @@ export const calculateMoveImpact = (
     !isSuccessful(move.accuracy * (attacker.stats.accuracy / 100))
   )
     return {
-      damage: { value: damage, effectiveness },
+      damage: { value: damage, type: move.damage_type, effectiveness },
       sideEffect: null,
-      animate: null,
+      target: null,
     };
   if (move.damage_type === "status") {
     return {
-      damage: { value: damage, effectiveness },
+      damage: { value: damage, type: move.damage_type, effectiveness },
       sideEffect:
         move.effect && !move.target.includes("user")
           ? getConditionEffect(move.effect, 100)
           : null,
-      animate: {
-        target: move.target.includes("user") ? attacker : defender,
-        type: "status",
-      },
+
+      target: move.target.includes("user") ? attacker : defender,
     };
   }
 
-  if (move.damage_type === "physical") {
+  if (move.damage_type === "physical")
     damage = calculatePokemonDamage(
       attacker.stats.attack,
       defender.stats.defense,
       move.power,
       effectiveness
     );
-    damageType = "physical";
-  }
-  if (move.damage_type === "special") {
+
+  if (move.damage_type === "special")
     damage = calculatePokemonDamage(
       attacker.stats["special-attack"],
       defender.stats["special-defense"],
       move.power,
       effectiveness
     );
-    damageType = "special";
-  }
 
   if (move.effect && hasRecoil(move.effect)) {
     const recoilPercentage = extractPercentageFromString(move.effect);
@@ -103,7 +97,7 @@ export const calculateMoveImpact = (
   return {
     damage: {
       value: damage,
-      type: damageType,
+      type: move.damage_type,
       effectiveness,
       recoilDamage,
       healthToDrain,
@@ -112,7 +106,7 @@ export const calculateMoveImpact = (
       move.effect && move.effect_chance
         ? getConditionEffect(move.effect, move.effect_chance)
         : null,
-    animate: { target: defender, type: "damage" },
+    target: defender,
   };
 };
 

@@ -2,9 +2,10 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import React, { useEffect, useState } from "react";
 import { useGetPokemonByNameQuery } from "../../app/api";
 import { StyledPokemonShowcaseContainer } from "./PokemonShowcase.styled";
+import { Player } from "../../types";
 
 interface PokemonShowcaseProps {
-  player: "user" | "enemy";
+  player: Player;
   pokemonName?: string;
 }
 
@@ -24,7 +25,7 @@ const PokemonShowcase: React.FC<PokemonShowcaseProps> = ({
 
   return (
     <StyledPokemonShowcaseContainer>
-      <span>{player === "user" ? "you" : "enemy"}</span>
+      <span>{player === Player.User ? Player.User : Player.Enemy}</span>
       {isLoading && <div className="loader"></div>}
       <img
         src={pokemon?.sprites.battle_front}
