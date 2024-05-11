@@ -31,7 +31,7 @@ const useMoveAnimation = (
 
   const animateCharacter = async (
     target: Pokemon,
-    targetAnimationType: "damage" | "special",
+    targetAnimationType: "damage" | "status",
     isPokemonMove?: boolean,
     damageType?: string,
     moveType?: string
@@ -64,6 +64,8 @@ const useMoveAnimation = (
           break;
       }
     }
+
+    console.log(targetAnimationType);
 
     defenderElement.classList.add(targetAnimationType);
     await wait(1000);

@@ -13,25 +13,10 @@ export const pokemonApi = createApi({
   reducerPath: "pokemonApi",
   baseQuery: fetchBaseQuery({ baseUrl: "https://pokeapi.co/api/v2/" }),
   endpoints: (builder) => ({
-    getPokemonNames: builder.query<PaginatedPokemonNamesResult, string>({
-      query: (url) => url,
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
-      },
-      // Always merge incoming data to the cache entry
-      merge: (currentCache, newItems, { arg }) => {
-        const offset = arg.split("?")[1].split("&")[0].split("=")[1];
-
-        if (offset === "0") return newItems;
-
-        currentCache.results.push(...newItems.results);
-        currentCache.next = newItems.next;
-        return currentCache;
-      },
-      // Refetch when the page arg changes
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      },
+    getPokemonNames: builder.query<PaginatedPokemonNamesResult, void>({
+      query: () => ({
+        url: "pokemon?limit=1302&offset=0",
+      }),
     }),
     getPokemonByName: builder.query<Pokemon, string>({
       query: (name) => `pokemon/${name}`,

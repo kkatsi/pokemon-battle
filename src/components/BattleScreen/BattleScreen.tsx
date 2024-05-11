@@ -43,6 +43,8 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
     enemyElement: enemyRef.current,
   });
 
+  console.log(userHealth, enemyHealth);
+
   useEffect(() => {
     if (closeModal) onBattleEnd();
   }, [closeModal, onBattleEnd]);

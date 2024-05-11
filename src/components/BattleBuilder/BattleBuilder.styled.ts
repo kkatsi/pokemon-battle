@@ -19,6 +19,7 @@ export const StyledBattleBuilderContainer = styled.div`
     font-size: 4rem;
     line-height: 1.1;
     margin: 0;
+    margin-bottom: 16px;
     color: #ffcc00;
     -webkit-text-stroke-width: 2px;
     -webkit-text-stroke-color: #0075be;

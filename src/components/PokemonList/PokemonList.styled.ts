@@ -4,13 +4,28 @@ export const StyledPokemonListContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 16px;
+
+  input {
+    font-family: inherit;
+    font-size: 16px;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    color: white;
+    border: 0;
+    background-color: #212121;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  }
 
   ul {
     margin: 0;
     padding: 0;
     border-radius: 8px;
     overflow-y: auto;
-    max-height: calc(100dvh - 16px - 160px - 12px - 12px - 58px - 16px);
+    height: calc(
+      100dvh - 16px - 160px - 12px - 12px - 58px - 16px - 16px - 16px - 28px
+    );
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     /* width */
     &::-webkit-scrollbar {

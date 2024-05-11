@@ -5,9 +5,9 @@ interface uiState {
   healthAnimationDuration: number;
 }
 
-const initialState = {
+const initialState: uiState = {
   healthAnimationDuration: 1000,
-} as uiState;
+};
 
 const uiSlice = createSlice({
   name: "ui",

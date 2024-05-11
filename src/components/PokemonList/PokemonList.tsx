@@ -1,8 +1,8 @@
-import React, { useRef, useState } from "react";
-import useGetPokemoNamesInfiniteQuery from "../../hooks/useGetPokemoNamesInfiniteQuery";
-import { StyledPokemonListContainer } from "./PokemonList.styled";
-import { updateQueryStringParam } from "../../utils/helper";
+import React, { ChangeEvent, useState } from "react";
+import useGetPokemonNames from "../../hooks/useGetPokemonNames";
 import { Player } from "../../types";
+import { updateQueryStringParam } from "../../utils/helper";
+import { StyledPokemonListContainer } from "./PokemonList.styled";
 
 interface PokemonListProps {
   player: Player;
@@ -13,20 +13,8 @@ const PokemonList: React.FC<PokemonListProps> = ({
   player,
   onPokemonSelection,
 }) => {
-  const { pokemonNames, fetchMore } = useGetPokemoNamesInfiniteQuery();
+  const { pokemonNames, search } = useGetPokemonNames();
   const [selectedPokemonName, setSelectedPokemonName] = useState("");
-
-  const observer = useRef<IntersectionObserver>();
-
-  const triggerElementRef = (element: HTMLElement | null) => {
-    if (observer.current) observer.current.disconnect();
-
-    observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) fetchMore();
-    });
-
-    if (element) observer.current.observe(element);
-  };
 
   const handlePokemonSelection = async (pokemonName: string) => {
     onPokemonSelection(pokemonName);
@@ -34,20 +22,21 @@ const PokemonList: React.FC<PokemonListProps> = ({
     updateQueryStringParam(player, pokemonName);
   };
 
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    search(value);
+  };
+
   return (
     <StyledPokemonListContainer>
+      <input type="text" placeholder="Search..." onChange={handleInputChange} />
       <ul>
-        {pokemonNames?.results.map((pokemonEntry, index) => (
+        {pokemonNames?.map((pokemonEntry) => (
           <li
             className={`${
               pokemonEntry.name === selectedPokemonName ? "active" : ""
             } ${player}`}
             key={`${player}-${pokemonEntry.name}`}
-            ref={
-              index === pokemonNames.results.length - 10
-                ? triggerElementRef
-                : undefined
-            }
           >
             <button onClick={() => handlePokemonSelection(pokemonEntry.name)}>
               {pokemonEntry.name}
