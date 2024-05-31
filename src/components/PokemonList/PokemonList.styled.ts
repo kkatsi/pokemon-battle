@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const StyledPokemonListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   gap: 16px;
 
   input {
@@ -23,9 +23,7 @@ export const StyledPokemonListContainer = styled.div`
     padding: 0;
     border-radius: 8px;
     overflow-y: auto;
-    height: calc(
-      100dvh - 16px - 160px - 12px - 12px - 58px - 16px - 16px - 16px - 28px
-    );
+    height: calc(100dvh - 16px - 160px - 12px - 12px - 58px - 16px - 28px);
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     /* width */
     &::-webkit-scrollbar {

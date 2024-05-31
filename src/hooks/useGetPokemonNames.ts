@@ -15,7 +15,9 @@ const useGetPokemonNames = () => {
   const search = (keyword: string) => {
     if (allPokemonNames?.results)
       setPokemonNames(
-        allPokemonNames?.results.filter((names) => names.name.includes(keyword))
+        allPokemonNames?.results.filter((names) =>
+          names.name.startsWith(keyword)
+        )
       );
   };
 
