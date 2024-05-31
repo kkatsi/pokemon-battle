@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { Player, Pokemon } from "../types";
 import { findColor } from "../utils/color";
 import { wait } from "../utils/helper";
@@ -29,48 +30,49 @@ const useMoveAnimation = (
     attackerElement.classList.remove("physical");
   };
 
-  const animateCharacter = async (
-    target: Pokemon,
-    targetAnimationType: "damage" | "status",
-    isPokemonMove?: boolean,
-    damageType?: string,
-    moveType?: string
-  ) => {
-    let attackerElement = userElement;
-    let defenderElement = enemyElement;
+  const animateCharacter = useCallback(
+    async (
+      target: Pokemon,
+      targetAnimationType: "damage" | "status",
+      isPokemonMove?: boolean,
+      damageType?: string,
+      moveType?: string
+    ) => {
+      let attackerElement = userElement;
+      let defenderElement = enemyElement;
 
-    if (userElement?.classList.contains(target.name)) {
-      attackerElement = enemyElement;
-      defenderElement = userElement;
-    }
-
-    if (!defenderElement || !attackerElement) return;
-
-    if (isPokemonMove) {
-      switch (damageType) {
-        case "physical":
-          await executePhysicalAttackAnimation(attackerElement);
-          break;
-        case "special":
-          await executeSpecialAttackAnimation(
-            userElement?.classList.contains(target.name)
-              ? Player.User
-              : Player.Enemy,
-            moveType ?? "normal",
-            attackerElement
-          );
-          break;
-        default:
-          break;
+      if (userElement?.classList.contains(target.name)) {
+        attackerElement = enemyElement;
+        defenderElement = userElement;
       }
-    }
 
-    console.log(targetAnimationType);
+      if (!defenderElement || !attackerElement) return;
 
-    defenderElement.classList.add(targetAnimationType);
-    await wait(1000);
-    defenderElement.classList.remove(targetAnimationType);
-  };
+      if (isPokemonMove) {
+        switch (damageType) {
+          case "physical":
+            await executePhysicalAttackAnimation(attackerElement);
+            break;
+          case "special":
+            await executeSpecialAttackAnimation(
+              userElement?.classList.contains(target.name)
+                ? Player.User
+                : Player.Enemy,
+              moveType ?? "normal",
+              attackerElement
+            );
+            break;
+          default:
+            break;
+        }
+      }
+
+      defenderElement.classList.add(targetAnimationType);
+      await wait(1000);
+      defenderElement.classList.remove(targetAnimationType);
+    },
+    [enemyElement, userElement]
+  );
 
   return animateCharacter;
 };

@@ -78,9 +78,14 @@ export const StyledPokemonListContainer = styled.div`
         margin: 0;
         width: 100%;
         cursor: pointer;
+
+        &:disabled {
+          color: gray;
+          cursor: not-allowed;
+        }
       }
 
-      &:hover {
+      &:hover:not(:has(button:disabled)) {
         box-shadow: 0 0 0 1px white;
       }
     }

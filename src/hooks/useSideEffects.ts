@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Condition, ConditionName, Pokemon, UnknownEffect } from "../types";
 import { isSuccessful } from "../utils/battle";
 import { adjustPokemonStat } from "../utils/stats";
@@ -120,35 +120,35 @@ const useSideEffects = (
     return canMove;
   };
 
-  const handleEndOfTurnSideEffect = async (
-    activeSideEffect: Condition,
-    name: string
-  ) => {
-    switch (activeSideEffect.name) {
-      case ConditionName.BURN:
-        setText(`${name} is hurt by it's burn!`);
-        await wait(TEXT_ANIMATION_DURATION);
-        await animateCharacter(user.name === name ? user : enemy, "damage");
-        await adjustHealth(
-          name,
-          activeSideEffect.extraDamage *
-            (user.name === name ? user.maxHealth : enemy.maxHealth)
-        );
-        break;
-      case ConditionName.POISON:
-        setText(`${name} is hurt by poison!`);
-        await wait(TEXT_ANIMATION_DURATION);
-        await animateCharacter(user.name === name ? user : enemy, "damage");
-        await adjustHealth(
-          name,
-          activeSideEffect.extraDamage *
-            (user.name === name ? user.maxHealth : enemy.maxHealth)
-        );
-        break;
-      default:
-        break;
-    }
-  };
+  const handleEndOfTurnSideEffect = useCallback(
+    async (activeSideEffect: Condition, name: string) => {
+      switch (activeSideEffect.name) {
+        case ConditionName.BURN:
+          setText(`${name} is hurt by it's burn!`);
+          await wait(TEXT_ANIMATION_DURATION);
+          await animateCharacter(user.name === name ? user : enemy, "damage");
+          await adjustHealth(
+            name,
+            activeSideEffect.extraDamage *
+              (user.name === name ? user.maxHealth : enemy.maxHealth)
+          );
+          break;
+        case ConditionName.POISON:
+          setText(`${name} is hurt by poison!`);
+          await wait(TEXT_ANIMATION_DURATION);
+          await animateCharacter(user.name === name ? user : enemy, "damage");
+          await adjustHealth(
+            name,
+            activeSideEffect.extraDamage *
+              (user.name === name ? user.maxHealth : enemy.maxHealth)
+          );
+          break;
+        default:
+          break;
+      }
+    },
+    [adjustHealth, animateCharacter, enemy, setText, user]
+  );
 
   return {
     handleSideEffect,

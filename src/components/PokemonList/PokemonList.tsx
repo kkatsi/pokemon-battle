@@ -5,6 +5,7 @@ import { updateQueryStringParam } from "../../utils/helper";
 import { StyledPokemonListContainer } from "./PokemonList.styled";
 
 interface PokemonListProps {
+  alreadySelectedPokemon?: { player: Player; pokemonName?: string };
   player: Player;
   onPokemonSelection: (x: string) => void;
 }
@@ -12,12 +13,17 @@ interface PokemonListProps {
 const PokemonList: React.FC<PokemonListProps> = ({
   player,
   onPokemonSelection,
+  alreadySelectedPokemon,
 }) => {
   const { pokemonNames, search } = useGetPokemonNames();
   const [selectedPokemonName, setSelectedPokemonName] = useState("");
 
   const handlePokemonSelection = async (pokemonName: string) => {
-    onPokemonSelection(pokemonName);
+    if (
+      pokemonName !== alreadySelectedPokemon?.pokemonName &&
+      player !== alreadySelectedPokemon?.player
+    )
+      onPokemonSelection(pokemonName);
     setSelectedPokemonName(pokemonName);
     updateQueryStringParam(player, pokemonName);
   };
@@ -38,7 +44,13 @@ const PokemonList: React.FC<PokemonListProps> = ({
             } ${player}`}
             key={`${player}-${pokemonEntry.name}`}
           >
-            <button onClick={() => handlePokemonSelection(pokemonEntry.name)}>
+            <button
+              disabled={
+                alreadySelectedPokemon?.pokemonName === pokemonEntry.name &&
+                player !== alreadySelectedPokemon?.player
+              }
+              onClick={() => handlePokemonSelection(pokemonEntry.name)}
+            >
               {pokemonEntry.name}
             </button>
           </li>

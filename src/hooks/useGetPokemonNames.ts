@@ -13,7 +13,6 @@ const useGetPokemonNames = () => {
   }, [allPokemonNames?.results]);
 
   const search = (keyword: string) => {
-    console.log(keyword);
     if (allPokemonNames?.results)
       setPokemonNames(
         allPokemonNames?.results.filter((names) => names.name.includes(keyword))

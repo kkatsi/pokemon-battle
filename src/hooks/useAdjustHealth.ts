@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setHealthAnimationDuration } from "../app/uiSlice";
 import { Pokemon } from "../types";
@@ -10,27 +10,26 @@ const useAdjustHealth = (user: Pokemon, enemy: Pokemon) => {
   const [enemyHealth, setEnemyHealth] = useState(enemy.maxHealth);
   const dispatch = useDispatch();
 
-  const adjustHealth = async (
-    playerName: string,
-    amount: number,
-    isGaining?: boolean
-  ) => {
-    const animationDuration = calculateHealthAnimationDuration(amount);
-    dispatch(setHealthAnimationDuration(animationDuration));
+  const adjustHealth = useCallback(
+    async (playerName: string, amount: number, isGaining?: boolean) => {
+      const animationDuration = calculateHealthAnimationDuration(amount);
+      dispatch(setHealthAnimationDuration(animationDuration));
 
-    const targetHealthUpdater =
-      playerName === enemy.name ? setEnemyHealth : setUserHealth;
-    const targetMaxHealth =
-      playerName === user.name ? user.maxHealth : enemy.maxHealth;
-    const operator = isGaining ? "+" : "-";
+      const targetHealthUpdater =
+        playerName === enemy.name ? setEnemyHealth : setUserHealth;
+      const targetMaxHealth =
+        playerName === user.name ? user.maxHealth : enemy.maxHealth;
+      const operator = isGaining ? "+" : "-";
 
-    targetHealthUpdater((prevHealth) => {
-      const result = prevHealth + (operator === "+" ? amount : -amount);
-      return Math.min(Math.max(result, 0), targetMaxHealth);
-    });
+      targetHealthUpdater((prevHealth) => {
+        const result = prevHealth + (operator === "+" ? amount : -amount);
+        return Math.min(Math.max(result, 0), targetMaxHealth);
+      });
 
-    await wait(animationDuration + 500);
-  };
+      await wait(animationDuration + 500);
+    },
+    [dispatch, enemy.maxHealth, enemy.name, user.maxHealth, user.name]
+  );
 
   return { adjustHealth, userHealth, enemyHealth };
 };

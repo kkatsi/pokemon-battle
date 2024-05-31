@@ -20,6 +20,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
   const [enemyMove, setEnemyMove] = useState<Move | undefined>(
     minmaxMoveDecision(enemy.moves ?? [], enemy, user)
   );
+  console.log(user, enemy);
   const [userMove, setUserMove] = useState<Move>();
   const userRef = useRef<HTMLDivElement>(null);
   const enemyRef = useRef<HTMLDivElement>(null);
@@ -42,8 +43,6 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
     userElement: userRef.current,
     enemyElement: enemyRef.current,
   });
-
-  console.log(userHealth, enemyHealth);
 
   useEffect(() => {
     if (closeModal) onBattleEnd();

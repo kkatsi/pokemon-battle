@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { Player } from "../../types";
 import PokemonList from "../PokemonList";
 import PokemonShowcase from "../PokemonShowcase";
 import { StyledBattleBuilderContainer } from "./BattleBuilder.styled";
-import { Player } from "../../types";
 
 interface BattleBuilderProps {
   onBattleStart: (userPokemonName: string, enemyPokemonName: string) => void;
@@ -23,11 +23,19 @@ const BattleBuilder: React.FC<BattleBuilderProps> = ({ onBattleStart }) => {
           pokemonName={userSelectedPokemonName}
         />
         <PokemonList
+          alreadySelectedPokemon={{
+            player: Player.Enemy,
+            pokemonName: enemySelectedPokemonName,
+          }}
           player={Player.User}
           onPokemonSelection={setUserSelectedPokemonName}
         />
         <div className="hr"></div>
         <PokemonList
+          alreadySelectedPokemon={{
+            player: Player.User,
+            pokemonName: userSelectedPokemonName,
+          }}
           player={Player.Enemy}
           onPokemonSelection={setEnemySelectedPokemonName}
         />
