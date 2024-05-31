@@ -10,18 +10,18 @@ const useGetSelectedPokemons = () => {
   const user = query.get("user");
   const enemy = query.get("enemy");
 
-  const { data: yourPokemonWithoutMoves } = useGetPokemonByNameQuery(
+  const { data: userPokemonWithoutMoves } = useGetPokemonByNameQuery(
     user ?? skipToken
   );
   const { data: enemyPokemonWithoutMoves } = useGetPokemonByNameQuery(
     enemy ?? skipToken
   );
 
-  const { data: yourPokemonMoveset } = useGetPokemonMovesetByNameQuery(
-    yourPokemonWithoutMoves
+  const { data: userPokemonMoveset } = useGetPokemonMovesetByNameQuery(
+    userPokemonWithoutMoves
       ? {
-          name: yourPokemonWithoutMoves.name,
-          moves: yourPokemonWithoutMoves.moveNames,
+          name: userPokemonWithoutMoves.name,
+          moves: userPokemonWithoutMoves.moveNames,
         }
       : skipToken
   );
@@ -34,21 +34,20 @@ const useGetSelectedPokemons = () => {
       : skipToken
   );
 
-  const yourPokemon = yourPokemonMoveset
+  const userPokemon = userPokemonMoveset
     ? ({
-        ...yourPokemonWithoutMoves,
-        moves: yourPokemonMoveset,
+        ...userPokemonWithoutMoves,
+        moves: userPokemonMoveset,
       } as Pokemon)
-    : yourPokemonWithoutMoves;
+    : userPokemonWithoutMoves;
   const enemyPokemon = enemyPokemonMoveset
     ? ({
         ...enemyPokemonWithoutMoves,
         moves: enemyPokemonMoveset,
       } as Pokemon)
     : enemyPokemonWithoutMoves;
-
   return {
-    yourPokemon,
+    userPokemon,
     enemyPokemon,
   };
 };
