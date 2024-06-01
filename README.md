@@ -49,8 +49,7 @@ To run this project locally, follow these steps:
 
 1. Open the app.
 2. Select your Pokémon and set up the battle.
-3. Choose moves and watch the battle unfold with animations and effects.
-4. Enjoy the simulation and experiment with different strategies!
+3. Enjoy the simulation and experiment with different strategies!
 
 ---
 
