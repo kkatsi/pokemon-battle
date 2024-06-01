@@ -19,11 +19,7 @@ const PokemonList: React.FC<PokemonListProps> = ({
   const [selectedPokemonName, setSelectedPokemonName] = useState("");
 
   const handlePokemonSelection = async (pokemonName: string) => {
-    if (
-      pokemonName !== alreadySelectedPokemon?.pokemonName &&
-      player !== alreadySelectedPokemon?.player
-    )
-      onPokemonSelection(pokemonName);
+    onPokemonSelection(pokemonName);
     setSelectedPokemonName(pokemonName);
     updateQueryStringParam(player, pokemonName);
   };
