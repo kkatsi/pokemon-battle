@@ -16,7 +16,7 @@ const useGetPokemonNames = () => {
     if (allPokemonNames?.results)
       setPokemonNames(
         allPokemonNames?.results.filter((names) =>
-          names.name.startsWith(keyword)
+          names.name.toLowerCase().startsWith(keyword.toLowerCase())
         )
       );
   };
